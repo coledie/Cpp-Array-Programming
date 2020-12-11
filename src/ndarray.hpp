@@ -9,6 +9,7 @@ int get_size(const int& dims, const int*& shape){
    return size;
 }
 
+
 template <typename T>
 class ndarray {
    /* N Dimensional array. */
@@ -35,7 +36,7 @@ class ndarray {
       }
 
       template <typename K> ndarray<K> as();
-      ndarray<T> resize(const int&, const int*&);
+      ndarray<T>& reshape(const int&, const int*&);
 };
 
 
@@ -96,7 +97,7 @@ ndarray<K> ndarray<T>::as(){
 
 
 template <typename T>
-ndarray<T> ndarray<T>::resize(const int& dims_new, const int*& shape_new){
+ndarray<T>& ndarray<T>::reshape(const int& dims_new, const int*& shape_new){
    /* Update shape of this array and return it. */
    int size_new = get_size(dims_new, shape_new);
    if(size_new != size)
@@ -108,7 +109,8 @@ ndarray<T> ndarray<T>::resize(const int& dims_new, const int*& shape_new){
    for(int i=0; i < _dims; i++)
       _shape[i] = shape_new[i];
 
-   return this;
+   return *this;
 }
+
 
 #endif
