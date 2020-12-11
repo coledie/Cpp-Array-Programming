@@ -3,8 +3,10 @@
 
 namespace nd {
     /* Namespace for ndarray related functions. */
+
     template <typename T>
     ndarray<T> copy(ndarray<T> input){
+        /* Return copy of input array. */
         int size_in = input.size();
         int dims_in = input.dims();
         int* shape_in = input.shape();

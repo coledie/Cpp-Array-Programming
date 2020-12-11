@@ -2,6 +2,13 @@
 #define H_NDARRAY
 
 
+int get_size(const int& dims, const int*& shape){
+   int size = (int) (dims > 0);
+   for(int i=0; i < dims; i++)
+      size *= shape[i];
+   return size;
+}
+
 template <typename T>
 class ndarray {
    /* N Dimensional array. */
@@ -28,6 +35,7 @@ class ndarray {
       }
 
       template <typename K> ndarray<K> as();
+      ndarray<T> resize(const int&, const int*&);
 };
 
 
@@ -41,11 +49,11 @@ ndarray<T>::ndarray(const int& __size){
 
 
 template <typename T>
-ndarray<T>::ndarray(const int& __size, T* _data){
+ndarray<T>::ndarray(const int& __size, T* __data){
    _size = __size;
    _dims = 1;
    _shape = new int[_dims]; _shape[0] = _size;
-   _data = _data;
+   _data = __data;
 }
 
 
@@ -53,17 +61,17 @@ template <typename T>
 ndarray<T>::ndarray(const int& __dims, const int*& __shape){
    _dims = __dims;
    _shape = __shape;
-   _size = 1; for(int i=0; i<_dims; i++) _size *= _shape[i];
+   _size = get_size(__dims, __shape);
    _data = new T[_size];
 }
 
 
 template <typename T>
-ndarray<T>::ndarray(const int& __dims, const int*& __shape, T* _data){
+ndarray<T>::ndarray(const int& __dims, const int*& __shape, T* __data){
    _dims = __dims;
    _shape = __shape;
-   _size = 1; for(int i=0; i<_dims; i++) _size *= _shape[i];
-   _data = _data;
+   _size = get_size(__dims, __shape);
+   _data = __data;
 }
 
 
@@ -76,6 +84,7 @@ ndarray<T>::~ndarray(){
 template <typename T>
 template <typename K>
 ndarray<K> ndarray<T>::as(){
+   /* Using data in this array, return similar array of type K. */
    K *output = new K[_size];
 
    for(int i=0; i < _size; i++){
@@ -85,5 +94,21 @@ ndarray<K> ndarray<T>::as(){
    return ndarray<K>(_size, output);
 };
 
+
+template <typename T>
+ndarray<T> ndarray<T>::resize(const int& dims_new, const int*& shape_new){
+   /* Update shape of this array and return it. */
+   int size_new = get_size(dims_new, shape_new);
+   if(size_new != size)
+      throw std::invalid_argument((char*) ("Reshaped array must be same size as previous: " + size + " != " + size_new));
+
+   _dims = dims_new;
+   delete[] _shape;
+   _shape = new int[_dims];
+   for(int i=0; i < _dims; i++)
+      _shape[i] = shape_new[i];
+
+   return this;
+}
 
 #endif
