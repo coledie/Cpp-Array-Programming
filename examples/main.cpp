@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../src/ndarray.hpp"
+#include "../src/functional.cpp"
 
 
 int main() {

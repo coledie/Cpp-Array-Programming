@@ -4,10 +4,11 @@
 
 template <typename T>
 class ndarray {
+   /* N Dimensional array. */
       int _size;
       int _dims;
       int* _shape;
-      T* data;
+      T* _data;
 
    public:
       ndarray(const int&);
@@ -19,6 +20,7 @@ class ndarray {
       int size(){ return _size; }
       int dims(){ return _dims; }
       int* shape(){ return _shape; }
+      T* data(){ return _data; }
 
       operator char*() const {
          // for use in printf
@@ -34,7 +36,7 @@ ndarray<T>::ndarray(const int& __size){
    _size = __size;
    _dims = 1;
    _shape = new int[_dims]; _shape[0] = _size;
-   data = new T[_size];
+   _data = new T[_size];
 }
 
 
@@ -43,7 +45,7 @@ ndarray<T>::ndarray(const int& __size, T* _data){
    _size = __size;
    _dims = 1;
    _shape = new int[_dims]; _shape[0] = _size;
-   data = _data;
+   _data = _data;
 }
 
 
@@ -52,7 +54,7 @@ ndarray<T>::ndarray(const int& __dims, const int*& __shape){
    _dims = __dims;
    _shape = __shape;
    _size = 1; for(int i=0; i<_dims; i++) _size *= _shape[i];
-   data = new T[_size];
+   _data = new T[_size];
 }
 
 
@@ -61,13 +63,13 @@ ndarray<T>::ndarray(const int& __dims, const int*& __shape, T* _data){
    _dims = __dims;
    _shape = __shape;
    _size = 1; for(int i=0; i<_dims; i++) _size *= _shape[i];
-   data = _data;
+   _data = _data;
 }
 
 
 template <typename T>
 ndarray<T>::~ndarray(){
-   delete [] data;
+   delete[] _data;
 }
 
 
@@ -77,7 +79,7 @@ ndarray<K> ndarray<T>::as(){
    K *output = new K[_size];
 
    for(int i=0; i < _size; i++){
-      output[i] = (K) data[i];
+      output[i] = (K) _data[i];
    }
 
    return ndarray<K>(_size, output);
