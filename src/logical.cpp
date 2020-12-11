@@ -4,7 +4,7 @@
 
 namespace nd {
     template <typename T>
-    ndarray<T> unique(ndarray<T> input){
+    ndarray<T> unique(ndarray<T>& input){
         /* Return ndarray of unique items. */
         int size_in = input.size();
         T* data_in = input.data();
