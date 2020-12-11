@@ -3,9 +3,15 @@
 
 
 int main() {
-   ndarray<int> ww(5);
+   ndarray<int> data(5);
 
-   printf(ww.as<float>());
+   std::cout << data.as<float>() << std::endl;
+   std::cout << "Size: " << data.size() << std::endl;
+
+   std::cout << "Shape: [";
+   for(int i=0; i < data.dims(); i++)
+      std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
+   std::cout << "]" << std::endl;
 
    return 0;
 }
