@@ -1,1 +1,6 @@
-#include "../src/nd.hpp"
+#include "../src/nd.h"
+
+
+namespace nd {
+
+}

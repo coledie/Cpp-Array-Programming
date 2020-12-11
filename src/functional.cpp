@@ -1,4 +1,4 @@
-#include "../src/nd.hpp"
+#include "../src/nd.h"
 
 
 namespace nd {
@@ -49,7 +49,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> resize(ndarray<T>& input, const int& size_new, const T& fill_value=0){
+    ndarray<T> resize(ndarray<T>& input, const int& size_new, const T& fill_value){
         /* Return a version of input with the input size given. */
         int size_old = input.size();
         T* data_old = input.data();
