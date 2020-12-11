@@ -9,4 +9,4 @@ main: examples/main.cpp
 	$(CC) $(CFLAGS) -o $(TARGET) examples/main.cpp
 
 clean:
-	$(RM) $(TARGET)
+	$(RM) $(TARGET).exe
