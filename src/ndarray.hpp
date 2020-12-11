@@ -10,10 +10,10 @@ class ndarray {
       T *data;
 
    public:
-      ndarray(const int);
-      ndarray(const int, T*);
-      ndarray(const int, const int*);
-      ndarray(const int, const int*, T*);
+      ndarray(const int&);
+      ndarray(const int&, T*);
+      ndarray(const int&, const int*&);
+      ndarray(const int&, const int*&, T*);
       ~ndarray();
 
       operator char*() const {
@@ -27,7 +27,7 @@ class ndarray {
 
 
 template <typename T>
-ndarray<T>::ndarray(const int _size){
+ndarray<T>::ndarray(const int& _size){
    size = _size;
    dims = 1;
    shape = new int[dims]; shape[0] = size;
@@ -36,7 +36,7 @@ ndarray<T>::ndarray(const int _size){
 
 
 template <typename T>
-ndarray<T>::ndarray(const int _size, T* _data){
+ndarray<T>::ndarray(const int& _size, T* _data){
    size = _size;
    dims = 1;
    shape = new int[dims]; shape[0] = size;
@@ -45,7 +45,7 @@ ndarray<T>::ndarray(const int _size, T* _data){
 
 
 template <typename T>
-ndarray<T>::ndarray(const int _dims, const int* _shape){
+ndarray<T>::ndarray(const int& _dims, const int*& _shape){
    dims = _dims;
    shape = _shape;
    size = 1; for(int i=0; i<_dims; i++) size *= shape[i];
@@ -54,7 +54,7 @@ ndarray<T>::ndarray(const int _dims, const int* _shape){
 
 
 template <typename T>
-ndarray<T>::ndarray(const int _dims, const int* _shape, T* _data){
+ndarray<T>::ndarray(const int& _dims, const int*& _shape, T* _data){
    dims = _dims;
    shape = _shape;
    size = 1; for(int i=0; i<_dims; i++) size *= shape[i];
