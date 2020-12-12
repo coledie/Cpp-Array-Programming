@@ -99,6 +99,44 @@ namespace nd {
 
     // Logical
     template <typename T>
+    bool _add_operator(T& a, T& b){ return a + b; }
+    template <typename T>
+    bool _sub_operator(T& a, T& b){ return a - b; }
+    template <typename T>
+    bool _mul_operator(T& a, T& b){ return a * b; }
+    template <typename T>
+    bool _div_operator(T& a, T& b){ return a / b; }
+    template <typename T>
+    bool _mod_operator(T& a, T& b){ return a % b; }
+
+    template <typename T, typename O>
+    T* arithmetic(ndarray<T>& a, ndarray<T>& b){
+        int size = a.size();
+        T* data_a = a.data();
+        T* data_b = b.data();
+        T* data_output = new T[size];
+
+        for(int i=0; i < size; i++)
+            data_output[i] = O(data_a[i], data_b[i]);
+        
+        ndarray<T> output(a.dims(), a.shape(), data_output);
+        return output;
+    }
+
+
+    template <typename T>
+    T add(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _add_operator>(a, b); }
+    template <typename T>
+    T sub(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _sub_operator>(a, b); }
+    template <typename T>
+    T mul(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _mul_operator>(a, b); }
+    template <typename T>
+    T div(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _div_operator>(a, b); }
+    template <typename T>
+    T mod(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _mod_operator>(a, b); }
+
+
+    template <typename T>
     bool _min_operator(T& a, T& b){ return a < b; }
     template <typename T>
     bool _max_operator(T& a, T& b){ return a > b; }
@@ -173,7 +211,7 @@ namespace nd {
         for(int i=0; i < size; i++)
             data_output[i] = C(data_a[i], data_b[i]);
         
-        ndarray<T> output(size, data_output);
+        ndarray<bool> output(a.dims(), a.shape(), data_output);
         return output;
     }
 
