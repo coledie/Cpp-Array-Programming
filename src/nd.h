@@ -295,6 +295,36 @@ namespace nd {
 
 
     template <typename T>
+    ndarray<T> transpose(ndarray<T>& input){
+        /* Return transpose of input - across last 2 dimensions. */
+        int size = input.size();
+        int dims = input.dims();
+        int* shape = input.shape();
+
+        if(dims < 2)
+            throw std::invalid_argument("Must be at least 2 dimensions to transpose.");
+
+        ndarray<T> output(dims, shape);
+
+        T value;
+        int temp, dim_m1 = dims-1, dim_m2 = dims-2;
+        int* pos;
+        for(int i=0; i<size; ++i){
+            pos = get_pos(dims, shape, i);
+
+            value = input[pos];
+
+            temp = pos[dim_m1];
+            pos[dim_m1] = pos[dim_m2];
+            pos[dim_m2] = temp;
+
+            output[pos] = value;
+        }
+
+        return output;
+    }
+
+    template <typename T>
     ndarray<T> unique(ndarray<T>& input){
         /* Return ndarray of unique items. */
         int size_in = input.size();
