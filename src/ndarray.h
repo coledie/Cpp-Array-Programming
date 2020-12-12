@@ -91,8 +91,18 @@ class ndarray {
       }
 
       operator char*() const {
-         // for use in printf
-         return (char*)"Not implemented.";
+         /* Printf usage. */
+         std::string output = "[";
+         for(int i=0; i<_size; ++i){
+            output += std::to_string(_data[i]);
+            output += (i < _size-1 ? ", " : "");
+         }
+         output += "]";
+
+         char* char_out = new char[output.size()+1];
+         output.copy(char_out, output.size()+1);
+         char_out[output.size()] = '\0';
+         return char_out;
       }
 
       T& operator[](int idx){
