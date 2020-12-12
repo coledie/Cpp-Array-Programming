@@ -95,7 +95,7 @@ class ndarray {
          return (char*)"Not implemented.";
       }
 
-      T operator[](int idx){
+      T& operator[](int idx){
          /* Indexing operator */
          if(abs(idx) > _size || idx == _size)
             throw std::invalid_argument((char*) "abs(idx) cannot be greater than size!");
@@ -103,7 +103,7 @@ class ndarray {
             idx = _size - idx;
          return _data[idx];
       }
-      T operator[](const int* pos){
+      T& operator[](const int* pos){
          /* Indexing operator */
          int* pos_real = new int[_dims];
          for(int i=0; i<_dims; ++i){
