@@ -127,6 +127,43 @@ class ndarray {
          return _data[get_idx(_dims, _shape, pos)];
       }
 
+      ndarray<T> operator()(int idx1, int idx2){
+         /* Slicing operator. */
+         if(abs(idx1) > _size || idx1 == _size)
+            throw std::invalid_argument((char*) "abs(idx1) cannot be greater than size!");
+         if(abs(idx2) > _size || idx2 == _size)
+            throw std::invalid_argument((char*) "abs(idx2) cannot be greater than size!");
+         if(idx1 < 0)
+            idx1 = _size - idx1;
+         if(idx2 < 0)
+            idx2 = _size - idx2;
+
+         int size_out = idx2 - idx1;
+
+         return ndarray<T>(size_out, _data+idx1);
+      }
+      ndarray<T> operator()(const int* pos1, const int* pos2){
+         /* Slicing operator. */
+         int* shape_out = new int[_dims], * pos1_real = new int[_dims], * pos2_real = new int[_dims];
+         for(int i=0; i<_dims; ++i){
+            int idx1 = pos1[i], idx2 = pos2[i];
+
+            if(abs(idx1) > _size || idx1 == _size)
+               throw std::invalid_argument((char*) "abs(idx2) cannot be greater than size!");
+            if(abs(idx2) > _size || idx2 == _size)
+               throw std::invalid_argument((char*) "abs(idx2) cannot be greater than size!");
+
+            pos1_real[i] = (idx1 >= 0 ? idx1 : _size - idx1);
+            pos2_real[i] = (idx2 >= 0 ? idx2 : _size - idx2);
+
+            shape_out[i] = pos2_real[i] - pos1_real[i];
+         }
+
+         int idx_initial = get_idx(_dims, _shape, pos1_real);
+
+         return ndarray<T>(_dims, shape_out, _data+idx_initial);
+      }
+
 };
 
 
