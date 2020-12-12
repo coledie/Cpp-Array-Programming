@@ -119,10 +119,8 @@ namespace nd {
             }
         }
 
-        int size_out = get_size(dims_out, shape_out);
-        T* data_out = new T[size_out];
+        ndarray<T> output(dims_out, shape_out);
         int* pos_a = new int[dims_out], pos_o = new int[dims_out];
-        int idx_o;
         int axis_offset = 0;
         for(int n=0; n<n_arrays; ++n){
             ndarray<T> a = arrays[n];
@@ -133,14 +131,11 @@ namespace nd {
                 for(int dd=0; dd<dims_out; ++dd)
                     pos_o = pos_a + (dd == axis ? axis_offset : 0);
 
-                idx_o = get_idx(dims_out, shape_out, pos_o);
-
-                data_out[idx_o] = a.data()[i];
+                output[pos_o] = a[pos_a];
             }
             axis_offset += a.shape()[axis];
         }
 
-        ndarray<T> output(dims_out, shape_out, data_out);
         return output;
     }
 
