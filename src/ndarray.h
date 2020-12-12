@@ -1,6 +1,7 @@
 #ifndef H_NDARRAY
 #define H_NDARRAY
 
+#include "../src/nditerator.h"
 #include <stdexcept>
 
 
@@ -48,6 +49,18 @@ class ndarray {
          delete[] _data;
       }
 
+      typedef ndarray_iterator<T> iterator; 
+      iterator begin(){ return iterator(data(), 0); }
+      iterator end(){ return iterator(data(), _size); }
+
+      int size(){ return _size; }
+      int dims(){ return _dims; }
+      int* shape(){ return _shape; }
+      T* data(){ return _data; }
+
+      T front(){ return &_data[0]; }
+      T back(){ return &_data[_size-1]; }
+
       template <typename K>
       ndarray<K> as(){
          /* Using data in this array, return similar array of type K. */
@@ -74,11 +87,6 @@ class ndarray {
 
          return *this;
       }
-
-      int size(){ return _size; }
-      int dims(){ return _dims; }
-      int* shape(){ return _shape; }
-      T* data(){ return _data; }
 
       operator char*() const {
          // for use in printf

@@ -16,9 +16,9 @@ int main() {
       std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
    std::cout << "]" << std::endl;
 
-   /*for(dtype v : data){
+   for(dtype v : data){
       std::cout << v << std::endl;
-   }*/
+   }
 
    return 0;
 }
