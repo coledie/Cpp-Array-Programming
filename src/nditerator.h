@@ -46,7 +46,10 @@ class ndarray_iterator {
             pos_ += n;
             return *this;
         }
-    
+
+        bool operator==(ndarray_iterator<T> b){
+            return this->pos_ == b.pos_ && this->buf_ == b.buf_;
+        }    
         bool operator!=(ndarray_iterator<T> b){
             return this->pos_ != b.pos_ || this->buf_ != b.buf_;
         }
