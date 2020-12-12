@@ -97,7 +97,76 @@ namespace nd {
         return output;
     }
 
+
+    template <typename T>
+    ndarray<T> stack(const int& n_arrays, ndarray<T>* arrays, const int& axis){
+        /* Stack a set of ndarrays along axis. */
+        if(n_arrays == 0)
+            return ndarray<T>(0);
+
+        int dims_out = arrays[0].dims();
+        int* shape_out = new int[dims_out];
+        for(int i=0; i<dims_out; ++i){
+            if(i == axis){
+                shape_out[i] = 0;
+                for(int j=0; j<n_arrays; ++j)
+                    shape_out[i] += arrays[j].shape()[i];
+            } else {
+                shape_out[i] = arrays[0].shape()[i];
+                for(int j=1; j<n_arrays; ++j)
+                    if(arrays[j].shape[i] != shape_out[i])
+                        throw std::length_error((char*)"Arrays must have same shape along all axes except stacking.");
+            }
+        }
+
+        int size_out = get_size(dims_out, shape_out);
+        T* data_out = new T[size_out];
+        int* pos_a = new int[dims_out], pos_o = new int[dims_out];
+        int idx_o;
+        int axis_offset = 0;
+        for(int n=0; n<n_arrays; ++n){
+            ndarray<T> a = arrays[n];
+
+            for(int i=0; i<a.size(); ++i){
+                pos_a = get_pos(a.dims(), a.shape, i);
+
+                for(int dd=0; dd<dims_out; ++dd)
+                    pos_o = pos_a + (dd == axis ? axis_offset : 0);
+
+                idx_o = get_idx(dims_out, shape_out, pos_o);
+
+                data_out[idx_o] = a.data()[i];
+            }
+            axis_offset += a.shape()[axis];
+        }
+
+        ndarray<T> output(dims_out, shape_out, data_out);
+        return output;
+    }
+
     // Logical
+    template <typename T>
+    ndarray<T> mask(ndarray<T>& array, ndarray<bool>& mask){
+        /* Return flatten set of values from array specified in mask. */
+        T* data_in = array.data();
+        T* data_mask = mask.data();
+
+        T* data_temp = new T[array.size()];
+        int j = 0;
+        for(int i=0; i<mask.size(); i++){
+            if(data_mask[i]){
+                data_temp[j] = data_in[i];
+                j += 1;
+            }
+        }
+
+        T* data_out = new T[j];
+        memcpy(data_out, data_temp, j * sizeof(T));
+
+        ndarray<T> output(j, data_out);
+        return output;
+    }
+
     template <typename T>
     bool _add_operator(T& a, T& b){ return a + b; }
     template <typename T>
@@ -306,7 +375,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> ones(const int size){
+    ndarray<T> ones(const int& size){
         T* data = full<T>(size, 1);
         ndarray<T> output(size, data);
         return output;

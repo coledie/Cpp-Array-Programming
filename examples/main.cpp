@@ -4,9 +4,9 @@
 
 int main() {
    typedef int dtype;
-   //const int dsize = 4;
+   const int dsize = 4;
 
-   ndarray<dtype> data = nd::ones<dtype>(4);
+   ndarray<dtype> data = nd::ones<dtype>(dsize);
 
    std::cout << data.as<float>() << std::endl;
    std::cout << "Size: " << data.size() << std::endl;

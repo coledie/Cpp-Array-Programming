@@ -5,8 +5,9 @@
 #include <stdexcept>
 
 
-int get_size(const int& dims, const int*& shape);
-
+int get_size(const int&, const int*);
+int get_idx(const int&, const int*, const int*);
+int* get_pos(const int&, const int*, const int&);
 
 template <typename T>
 class ndarray {
