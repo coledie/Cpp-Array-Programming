@@ -32,14 +32,14 @@ class ndarray {
          _data = __data;
       }
 
-      ndarray(const int& __dims, const int*& __shape){
+      ndarray(const int& __dims, const int* __shape){
          _dims = __dims;
          _shape = __shape;
          _size = get_size(__dims, __shape);
          _data = new T[_size];
       }
 
-      ndarray(const int& __dims, const int*& __shape, T* __data){
+      ndarray(const int& __dims, const int* __shape, T* __data){
          _dims = __dims;
          _shape = __shape;
          _size = get_size(__dims, __shape);
@@ -74,7 +74,7 @@ class ndarray {
          return ndarray<K>(_size, output);
       };
 
-      ndarray<T>& reshape(const int& dims_new, const int*& shape_new){
+      ndarray<T>& reshape(const int& dims_new, const int* shape_new){
          /* Update shape of this array and return it. */
          int size_new = get_size(dims_new, shape_new);
          if(size_new != size)

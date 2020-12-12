@@ -352,7 +352,7 @@ namespace nd {
 
 
     template <typename T>
-    T* full(const int& dims, const int*& shape, const T& fill_value){
+    T* full(const int& dims, const int* shape, const T& fill_value){
         int size = get_size(dims, shape);
         return full<T>(size, fill_value);
     }
@@ -367,7 +367,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> zeros(const int& dims, const int*& shape){
+    ndarray<T> zeros(const int& dims, const int* shape){
         T* data = full<T>(dims, shape, 0);
         ndarray<T> output(dims, shape, data);
         return output;
@@ -383,7 +383,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> ones(const int& dims, const int*& shape){
+    ndarray<T> ones(const int& dims, const int* shape){
         T* data = full<T>(dims, shape, 1);
         ndarray<T> output(dims, shape, data);
         return output;
@@ -399,7 +399,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> empty(const int& dims, const int*& shape){
+    ndarray<T> empty(const int& dims, const int* shape){
         int size = get_size(dims, shape);
         return empty<T>(size);
     }
