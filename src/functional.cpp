@@ -4,11 +4,6 @@
 namespace nd {
     template <typename T>
     ndarray<T> append(ndarray<T>& array1, ndarray<T>& array2){
-        // TODO any shape assertions, see what shapes able to append w/
-        // np and the output shaep
-        int dims_new = 0;
-        int* shape_new = new int[dims_new]; // todo
-
         int array1_size = array1.size();
         T* array1_data = array1.data();
         int array2_size = array2.size();
@@ -21,7 +16,7 @@ namespace nd {
         for(int i=0; i < array2_size; i++)
             data[array1_size + i] = array2_data[i];
 
-        ndarray<T> output(dims_new, shape_new, data);
+        ndarray<T> output(size_total, data);
         return output;
     }
 
