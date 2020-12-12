@@ -3,6 +3,7 @@
 
 #include "../src/nditerator.h"
 #include <stdexcept>
+#include <cmath>
 
 
 int get_size(const int&, const int*);
@@ -74,7 +75,7 @@ class ndarray {
          return ndarray<K>(_size, output);
       };
 
-      ndarray<T>& reshape(const int& dims_new, const int* shape_new){
+      ndarray<T> reshape(const int& dims_new, const int* shape_new){
          /* Update shape of this array and return it. */
          int size_new = get_size(dims_new, shape_new);
          if(size_new != size)
@@ -93,6 +94,29 @@ class ndarray {
          // for use in printf
          return (char*)"Not implemented.";
       }
+
+      T operator[](int idx){
+         /* Indexing operator */
+         if(abs(idx) > _size || idx == _size)
+            throw std::invalid_argument((char*) "abs(idx) cannot be greater than size!");
+         if(idx < 0)
+            idx = _size - idx;
+         return _data[idx];
+      }
+      T operator[](const int* pos){
+         /* Indexing operator */
+         int* pos_real = new int[_dims];
+         for(int i=0; i<_dims; ++i){
+            int idx = pos[i];
+
+            if(abs(idx) > _size || idx == _size)
+               throw std::invalid_argument((char*) "abs(idx) cannot be greater than size!");
+
+            pos_real[i] = (idx >= 0 ? idx : _size - idx);
+         }
+         return _data[get_idx(_dims, _shape, pos)];
+      }
+
 };
 
 
