@@ -318,7 +318,7 @@ namespace nd {
         int size_in = input.size();
         T* data_in = input.data();
 
-        std::set<T> u();
+        std::set<T> u;
         T* data_temp = new int[size_in];
         std::pair<std::set<int>::iterator, bool> ret;
         for(int i=0, j=0; i < size_in; i++){
@@ -332,8 +332,8 @@ namespace nd {
 
         int size_out = u.size();
         T* data_out = new int[size_out];
-        memcpy(data_out, data_temp, size_out * sizeof(T));
-        delete[] data_temp, u;
+        std::copy(data_temp, data_temp+size_out, data_out);
+        delete[] data_temp;
 
         ndarray<T> output(size_out, data_out);
         return output;
