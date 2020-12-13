@@ -35,14 +35,14 @@ class ndarray {
 
       ndarray(const int& __dims, const int* __shape){
          _dims = __dims;
-         _shape = __shape;
+         _shape = new int[_dims]; for(int i=0; i<_dims; ++i) _shape[i] = __shape[i];
          _size = get_size(__dims, __shape);
          _data = new T[_size];
       }
 
       ndarray(const int& __dims, const int* __shape, T* __data){
          _dims = __dims;
-         _shape = __shape;
+         _shape = new int[_dims]; for(int i=0; i<_dims; ++i) _shape[i] = __shape[i];
          _size = get_size(__dims, __shape);
          _data = __data;
       }
@@ -60,8 +60,8 @@ class ndarray {
       int* shape(){ return _shape; }
       T* data(){ return _data; }
 
-      T front(){ return &_data[0]; }
-      T back(){ return &_data[_size-1]; }
+      T front(){ return _data[0]; }
+      T back(){ return _data[_size-1]; }
 
       template <typename K>
       ndarray<K> as(){
@@ -75,16 +75,16 @@ class ndarray {
          return ndarray<K>(_size, output);
       };
 
-      ndarray<T> reshape(const int& dims_new, const int* shape_new){
+      ndarray<T>& reshape(const int& dims_new, const int* shape_new){
          /* Update shape of this array and return it. */
          int size_new = get_size(dims_new, shape_new);
-         if(size_new != size)
-            throw std::invalid_argument((char*) ("Reshaped array must be same size as previous: " + size + " != " + size_new));
-
+         if(size_new != _size)
+            throw std::invalid_argument((char*) ("Reshaped array must be same size as previous."));
+         
          _dims = dims_new;
          delete[] _shape;
          _shape = new int[_dims];
-         for(int i=0; i < _dims; i++)
+         for(int i=0; i<_dims; ++i)
             _shape[i] = shape_new[i];
 
          return *this;

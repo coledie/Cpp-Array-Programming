@@ -200,42 +200,41 @@ namespace nd {
     T mod(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _mod_operator>(a, b); }
 
 
+    //template <typename T>
     template <typename T>
-    bool _min_operator(T& a, T& b){ return a < b; }
+    struct _min_operator{ bool operator()(T a, T b) const{ return a < b; } };
     template <typename T>
-    bool _max_operator(T& a, T& b){ return a > b; }
-
+    struct _max_operator{ bool operator()(T a, T b) const{ return a > b; } };
 
     template <typename T, typename C>
     T compare_value(ndarray<T>& input){
+        C comparator;
         T value_min = std::numeric_limits<T>::min(), value_max = std::numeric_limits<T>::max();
-        T value, value_curr = (C(value_min, value_max) ? value_max : value_min);
+        T value, value_curr = (comparator(value_min, value_max) ? value_max : value_min);
 
         for(int i=0; i < input.size(); i++){
             value = input.data()[i];
-            if (value < value_curr)
+            if (comparator(value, value_curr))
                 value_curr = value;
         }
 
         return value_curr;
     }
-
-
     template <typename T>
-    T min(ndarray<T>& input){ return compare_value<T, _min_operator>(input); }
+    T min(ndarray<T>& input){ return compare_value<T, _min_operator<T>>(input); }
     template <typename T>
-    T max(ndarray<T>& input){ return compare_value<T, _max_operator>(input); }
-
+    T max(ndarray<T>& input){ return compare_value<T, _max_operator<T>>(input); }
 
     template <typename T, typename C>
     int compare_idx(ndarray<T>& input){
+        C comparator;
         T value_min = std::numeric_limits<T>::min(), value_max = std::numeric_limits<T>::max();
-        T value, value_curr = (C(value_min, value_max) ? value_max : value_min);
+        T value, value_curr = (comparator(value_min, value_max) ? value_max : value_min);
         int idx_curr = -1;
 
         for(int i=0; i < input.size(); i++){
             value = input.data()[i];
-            if (value < value_curr){
+            if (comparator(value, value_curr)){
                 value_curr = value;
                 idx_curr = i;
             }
@@ -243,12 +242,10 @@ namespace nd {
 
         return idx_curr;
     }
-
-
     template <typename T>
-    int amin(ndarray<T>& input){ return compare_idx<T, _min_operator>(input); }
+    int amin(ndarray<T>& input){ return compare_idx<T, _min_operator<T>>(input); }
     template <typename T>
-    int amax(ndarray<T>& input){ return compare_idx<T, _max_operator>(input); }
+    int amax(ndarray<T>& input){ return compare_idx<T, _max_operator<T>>(input); }
 
 
     template <typename T>
