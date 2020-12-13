@@ -367,7 +367,7 @@ namespace nd {
 
     // Creation
     template <typename T>
-    inline T* full(const int& size, const T& fill_value){
+    T* full(const int& size, const T& fill_value){
         T* data = new T[size];
         for(int i=0; i < size; i++){
             data[i] = fill_value;
@@ -427,6 +427,20 @@ namespace nd {
     ndarray<T> empty(const int& dims, const int* shape){
         int size = get_size(dims, shape);
         return empty<T>(size);
+    }
+
+    template <typename T>
+    ndarray<T> arange(T start, T stop, T step=1){
+        int size = int((stop - start) / step);
+        T* data = new T[size];
+        for(int i=0; i < size; i++)
+            data[i] = start + (i * step);
+
+        return ndarray<T>(size, data);
+    }
+    template <typename T>
+    ndarray<T> arange(T stop){
+        return arange(0, stop);
     }
 }
 
