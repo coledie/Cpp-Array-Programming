@@ -35,14 +35,14 @@ class ndarray {
 
       ndarray(const int& __dims, const int* __shape){
          _dims = __dims;
-         _shape = new int[_dims]; for(int i=0; i<_dims; ++i) _shape[i] = __shape[i];
+         _shape = new int[_dims]; std::copy(__shape, __shape+_dims, _shape);
          _size = get_size(__dims, __shape);
          _data = new T[_size];
       }
 
       ndarray(const int& __dims, const int* __shape, T* __data){
          _dims = __dims;
-         _shape = new int[_dims]; for(int i=0; i<_dims; ++i) _shape[i] = __shape[i];
+         _shape = new int[_dims]; std::copy(__shape, __shape+_dims, _shape);
          _size = get_size(__dims, __shape);
          _data = __data;
       }

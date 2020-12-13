@@ -18,10 +18,8 @@ namespace nd {
 
         int size_total = array1_size + array2_size;
         T* data = new T[size_total];
-        for(int i=0; i < array1_size; i++)
-            data[i] = array1_data[i];
-        for(int i=0; i < array2_size; i++)
-            data[array1_size + i] = array2_data[i];
+        std::copy(array1_data, array1_data+array1_size, data);
+        std::copy(array2_data, array2_data+array2_size, data+array1_size);
 
         ndarray<T> output(size_total, data);
         return output;
@@ -37,33 +35,26 @@ namespace nd {
         T* data_in = input.data();
 
         int* shape_out = new T[dims_in];
-        for(int i=0; i < dims_in; i++)
-            shape_out[i] = shape_in[i];
+        std::copy(shape_in, shape_in+dims_in, shape_out);
 
         T* data_out = new T[size_in];
-        for(int i=0; i < size_in; i++)
-            data_out[i] = data_in[i];
+        std::copy(data_in, data_in+size_in, data_out);
 
         ndarray<T> output(dims_in, shape_out, data_out);
-
         return output;
     }
 
 
     template <typename T>
-    ndarray<T> resize(ndarray<T>& input, const int& size_new, const T& fill_value){
+    ndarray<T> resize(ndarray<T>& input, const int& size_new, const T& fill_value=1){
         /* Return a version of input with the input size given. */
         int size_old = input.size();
         T* data_old = input.data();
 
         T* data_new = new T[size_new];
-        for(int i=0; i < size_new; i++){
-            if(i > size_old){
-                data_new[i] = fill_value;
-            } else {
-                data_new[i] = data_old[i];
-            }
-        }
+        std::copy(data_old, data_old+size_old, data_new);
+        for(int i=size_old; i < size_new; i++)
+            data_new[i] = fill_value;
 
         ndarray<T> output(size_new, data_new);
         return output;

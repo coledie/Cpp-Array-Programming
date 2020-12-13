@@ -12,7 +12,7 @@ int get_size(const int& dims, const int* shape){
 int get_idx(const int& dims, const int* shape, const int* pos){
    int idx = 0;
    for(int i=0; i<dims; ++i)
-      idx += pos[i] * (dims ? shape[i-1] : 1);
+      idx += pos[i] * (i ? shape[i-1] : 1);
    return idx;
 }
 
