@@ -55,17 +55,13 @@ int main() {
 
       int shape_new[] = {1, 2, 3};
       data.reshape(3, shape_new);
-
       std::cout << "Shape: [";
       for(int i=0; i < data.dims(); i++)
          std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
       std::cout << "]" << std::endl;
       printf("%s\n", (char*)data);
 
-      ndarray<dtype> data_new = nd::squeeze(data);
-      data.~ndarray();
-      data = data_new;
-
+      data = nd::squeeze(data);
       std::cout << "Shape: [";
       for(int i=0; i < data.dims(); i++)
          std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
