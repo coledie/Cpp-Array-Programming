@@ -92,12 +92,33 @@ class ndarray {
 
       operator char*() const {
          /* Printf usage. */
-         std::string output = "[";
+         std::string output = "";
+         for(int i=0; i<_dims; ++i)
+            output += "[";
+
+         int pos_old[_dims] = {0}, *pos, n_changes;
          for(int i=0; i<_size; ++i){
+            pos = get_pos(_dims, _shape, i);
+
+            n_changes = 0;
+            for(int j=0; j<_dims-1; ++j)
+               if(pos[j] != pos_old[j])
+                  n_changes += 1;
+            for(int j=0; j<n_changes; ++j)
+               output += "]";
+            if(n_changes)
+               output += ", ";
+            for(int j=0; j<n_changes; ++j)
+               output += "[";
+
             output += std::to_string(_data[i]);
-            output += (i < _size-1 ? ", " : "");
+            output += (pos[_dims-1] < _shape[_dims-1]-1 ? ", " : "");
+
+            std::copy(pos, pos + _dims, pos_old);
          }
-         output += "]";
+
+         for(int j=0; j<_dims; ++j)
+            output += "]";
 
          char* char_out = new char[output.size()+1];
          output.copy(char_out, output.size()+1);
