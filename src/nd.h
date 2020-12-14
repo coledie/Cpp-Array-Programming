@@ -84,7 +84,11 @@ namespace nd {
             }
         }
         
-        ndarray<T> output(dims_new, shape_new, input.data());
+        int size_in = input.size();
+        T* data_in = input.data();
+        T* data_out = new T[size_in];
+        std::copy(data_in, data_in+size_in, data_out);
+        ndarray<T> output(dims_new, shape_new, data_out);
         return output;
     }
 
@@ -135,7 +139,7 @@ namespace nd {
     ndarray<T> mask(ndarray<T>& array, ndarray<bool>& mask){
         /* Return flatten set of values from array specified in mask. */
         T* data_in = array.data();
-        T* data_mask = mask.data();
+        bool* data_mask = mask.data();
 
         T* data_temp = new T[array.size()];
         int j = 0;
@@ -147,8 +151,7 @@ namespace nd {
         }
 
         T* data_out = new T[j];
-        memcpy(data_out, data_temp, j * sizeof(T));
-
+        std::copy(data_temp, data_temp + j, data_out);
         ndarray<T> output(j, data_out);
         return output;
     }
@@ -343,13 +346,13 @@ namespace nd {
     template <typename T>
     ndarray<T> where(ndarray<bool>& mask, const T& fill_true, const T& fill_false){
         int size_output = mask.size();
-        T* data_input = mask.data();
+        bool* data_input = mask.data();
         T* data_output = new T[size_output];
 
         for(int i=0; i < size_output; i++)
             data_output[i] = (data_input[i] ? fill_true : fill_false);
 
-        ndarray<T> output(mask.dims(), mask.shape(), mask.data());
+        ndarray<T> output(mask.dims(), mask.shape(), data_output);
         return output;
     }
 
