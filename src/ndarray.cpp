@@ -20,13 +20,13 @@ int get_idx(const int& dims, const int* shape, const int* pos){
 int* get_pos(const int& dims, const int*shape, const int& idx){
    int* pos = new int[dims];
    for(int i=0; i<dims; ++i){
-      if(!i){
-         pos[i] = i % shape[i];
+      if(i == dims-1){
+         pos[i] = idx % shape[i];
       } else {
          int dim_product = 1;
-         for(int j=0; j<i; ++j)
+         for(int j=dims-1; j>i; --j)
             dim_product *= shape[j];
-         pos[i] = int(i / dim_product);
+         pos[i] = int(idx / dim_product);
       }
    }
    return pos;
