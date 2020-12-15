@@ -10,7 +10,7 @@ namespace nd {
     /* Namespace for ndarray related functions. */
     // Functional
     template <typename T>
-    ndarray<T> append(ndarray<T>& array1, ndarray<T>& array2){
+    ndarray<T> append(ndarray<T> array1, ndarray<T> array2){
         int array1_size = array1.size();
         T* array1_data = array1.data();
         int array2_size = array2.size();
@@ -27,7 +27,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> copy(ndarray<T>& input){
+    ndarray<T> copy(ndarray<T> input){
         /* Return copy of input array. */
         int size_in = input.size();
         int dims_in = input.dims();
@@ -46,7 +46,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> resize(ndarray<T>& input, const int& size_new, const T& fill_value=1){
+    ndarray<T> resize(ndarray<T> input, const int& size_new, const T& fill_value=1){
         /* Return a version of input with the input size given. */
         int size_old = input.size();
         T* data_old = input.data();
@@ -62,7 +62,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> squeeze(ndarray<T>& input){
+    ndarray<T> squeeze(ndarray<T> input){
         /* Return version of input without any single valued dimensions. */
         int dims_old = input.dims();
         int* shape_old = input.shape();
@@ -136,7 +136,7 @@ namespace nd {
 
     // Logical
     template <typename T>
-    ndarray<T> mask(ndarray<T>& array, ndarray<bool>& mask){
+    ndarray<T> mask(ndarray<T>& array, ndarray<bool> mask){
         /* Return flatten set of values from array specified in mask. */
         T* data_in = array.data();
         bool* data_mask = mask.data();
@@ -168,7 +168,7 @@ namespace nd {
     bool _mod_operator(T& a, T& b){ return a % b; }
 
     template <typename T, typename O>
-    T* arithmetic(ndarray<T>& a, ndarray<T>& b){
+    T* arithmetic(ndarray<T> a, ndarray<T> b){
         int size = a.size();
         T* data_a = a.data();
         T* data_b = b.data();
@@ -183,15 +183,15 @@ namespace nd {
 
 
     template <typename T>
-    T add(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _add_operator>(a, b); }
+    T add(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _add_operator>(a, b); }
     template <typename T>
-    T sub(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _sub_operator>(a, b); }
+    T sub(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _sub_operator>(a, b); }
     template <typename T>
-    T mul(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _mul_operator>(a, b); }
+    T mul(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mul_operator>(a, b); }
     template <typename T>
-    T div(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _div_operator>(a, b); }
+    T div(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _div_operator>(a, b); }
     template <typename T>
-    T mod(ndarray<T>& a, ndarray<T>& b){ return arithmetic<T, _mod_operator>(a, b); }
+    T mod(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mod_operator>(a, b); }
 
 
     //template <typename T>
@@ -201,7 +201,7 @@ namespace nd {
     struct _max_operator{ bool operator()(T a, T b) const{ return a > b; } };
 
     template <typename T, typename C>
-    T compare_value(ndarray<T>& input){
+    T compare_value(ndarray<T> input){
         C comparator;
         T value_min = std::numeric_limits<T>::min(), value_max = std::numeric_limits<T>::max();
         T value, value_curr = (comparator(value_min, value_max) ? value_max : value_min);
@@ -215,12 +215,12 @@ namespace nd {
         return value_curr;
     }
     template <typename T>
-    T min(ndarray<T>& input){ return compare_value<T, _min_operator<T>>(input); }
+    T min(ndarray<T> input){ return compare_value<T, _min_operator<T>>(input); }
     template <typename T>
-    T max(ndarray<T>& input){ return compare_value<T, _max_operator<T>>(input); }
+    T max(ndarray<T> input){ return compare_value<T, _max_operator<T>>(input); }
 
     template <typename T, typename C>
-    int compare_idx(ndarray<T>& input){
+    int compare_idx(ndarray<T> input){
         C comparator;
         T value_min = std::numeric_limits<T>::min(), value_max = std::numeric_limits<T>::max();
         T value, value_curr = (comparator(value_min, value_max) ? value_max : value_min);
@@ -237,9 +237,9 @@ namespace nd {
         return idx_curr;
     }
     template <typename T>
-    int amin(ndarray<T>& input){ return compare_idx<T, _min_operator<T>>(input); }
+    int amin(ndarray<T> input){ return compare_idx<T, _min_operator<T>>(input); }
     template <typename T>
-    int amax(ndarray<T>& input){ return compare_idx<T, _max_operator<T>>(input); }
+    int amax(ndarray<T> input){ return compare_idx<T, _max_operator<T>>(input); }
 
 
     template <typename T>
@@ -257,7 +257,7 @@ namespace nd {
 
 
     template <typename T, typename C>
-    ndarray<T> compare(ndarray<T>& a, ndarray<T>& b){
+    ndarray<T> compare(ndarray<T> a, ndarray<T> b){
         int size = a.size();
         T* data_a = a.data();
         T* data_b = b.data();
@@ -272,21 +272,21 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> gt(ndarray<T>& a, ndarray<T>& b){ return compare<T, _gt_operator>(a, b); }
+    ndarray<T> gt(ndarray<T> a, ndarray<T> b){ return compare<T, _gt_operator>(a, b); }
     template <typename T>
-    ndarray<T> ge(ndarray<T>& a, ndarray<T>& b){ return compare<T, _ge_operator>(a, b); }
+    ndarray<T> ge(ndarray<T> a, ndarray<T> b){ return compare<T, _ge_operator>(a, b); }
     template <typename T>
-    ndarray<T> lt(ndarray<T>& a, ndarray<T>& b){ return compare<T, _lt_operator>(a, b); }
+    ndarray<T> lt(ndarray<T> a, ndarray<T> b){ return compare<T, _lt_operator>(a, b); }
     template <typename T>
-    ndarray<T> le(ndarray<T>& a, ndarray<T>& b){ return compare<T, _le_operator>(a, b); }
+    ndarray<T> le(ndarray<T> a, ndarray<T> b){ return compare<T, _le_operator>(a, b); }
     template <typename T>
-    ndarray<T> eq(ndarray<T>& a, ndarray<T>& b){ return compare<T, _eq_operator>(a, b); }
+    ndarray<T> eq(ndarray<T> a, ndarray<T> b){ return compare<T, _eq_operator>(a, b); }
     template <typename T>
-    ndarray<T> ne(ndarray<T>& a, ndarray<T>& b){ return compare<T, _ne_operator>(a, b); }
+    ndarray<T> ne(ndarray<T> a, ndarray<T> b){ return compare<T, _ne_operator>(a, b); }
 
 
     template <typename T>
-    ndarray<T> transpose(ndarray<T>& input){
+    ndarray<T> transpose(ndarray<T> input){
         /* Return transpose of input - across last 2 dimensions. */
         int size = input.size();
         int dims = input.dims();
@@ -294,8 +294,10 @@ namespace nd {
 
         if(dims < 2)
             throw std::invalid_argument("Must be at least 2 dimensions to transpose.");
+        if(shape[dims-1] != shape[dims-2])
+            throw std::invalid_argument("Last 2 dimensions must be square to transpose.");
 
-        ndarray<T> output(dims, shape);
+        ndarray<T> output(dims, shape, false);
 
         T value;
         int temp, dim_m1 = dims-1, dim_m2 = dims-2;
@@ -316,7 +318,7 @@ namespace nd {
     }
 
     template <typename T>
-    ndarray<T> unique(ndarray<T>& input){
+    ndarray<T> unique(ndarray<T> input){
         /* Return ndarray of unique items. */
         int size_in = input.size();
         T* data_in = input.data();
@@ -344,7 +346,7 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> where(ndarray<bool>& mask, const T& fill_true, const T& fill_false){
+    ndarray<T> where(ndarray<bool> mask, const T& fill_true, const T& fill_false){
         int size_output = mask.size();
         bool* data_input = mask.data();
         T* data_output = new T[size_output];
