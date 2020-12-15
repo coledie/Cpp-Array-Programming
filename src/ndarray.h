@@ -30,7 +30,7 @@ class ndarray {
          _size = __size;
          _dims = 1;
          _shape = new int[_dims]; _shape[0] = _size;
-         _data = __data;
+         _data = new T[_size]; std::copy(__data, __data+_size, _data);
       }
 
       ndarray(const int& __dims, const int* __shape, bool _){
@@ -44,7 +44,7 @@ class ndarray {
          _dims = __dims;
          _shape = new int[_dims]; std::copy(__shape, __shape+_dims, _shape);
          _size = get_size(__dims, __shape);
-         _data = __data;
+         _data = new T[_size]; std::copy(__data, __data+_size, _data);
       }
 
       ndarray(const ndarray<T>& old){
