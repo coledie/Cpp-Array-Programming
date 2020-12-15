@@ -76,48 +76,6 @@ namespace nd {
         return output;
     }
 
-
-    template <typename T>
-    ndarray<T> stack(const int& n_arrays, ndarray<T>* arrays, const int& axis){
-        /* Stack a set of ndarrays along axis. */
-        if(n_arrays == 0)
-            return ndarray<T>(0);
-
-        int dims_out = arrays[0].dims();
-        int* shape_out = new int[dims_out];
-        for(int i=0; i<dims_out; ++i){
-            if(i == axis){
-                shape_out[i] = 0;
-                for(int j=0; j<n_arrays; ++j)
-                    shape_out[i] += arrays[j].shape()[i];
-            } else {
-                shape_out[i] = arrays[0].shape()[i];
-                for(int j=1; j<n_arrays; ++j)
-                    if(arrays[j].shape[i] != shape_out[i])
-                        throw std::length_error((char*)"Arrays must have same shape along all axes except stacking.");
-            }
-        }
-
-        ndarray<T> output(dims_out, shape_out);
-        int* pos_a = new int[dims_out], pos_o = new int[dims_out];
-        int axis_offset = 0;
-        for(int n=0; n<n_arrays; ++n){
-            ndarray<T> a = arrays[n];
-
-            for(int i=0; i<a.size(); ++i){
-                pos_a = get_pos(a.dims(), a.shape, i);
-
-                for(int dd=0; dd<dims_out; ++dd)
-                    pos_o = pos_a + (dd == axis ? axis_offset : 0);
-
-                output[pos_o] = a[pos_a];
-            }
-            axis_offset += a.shape()[axis];
-        }
-
-        return output;
-    }
-
     // Logical
     template <typename T>
     ndarray<T> mask(ndarray<T>& array, ndarray<bool> mask){
