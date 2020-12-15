@@ -26,25 +26,26 @@ class ndarray {
          _data = new T[_size];
       }
 
-      ndarray(const int& __size, T* __data){
+      ndarray(const int& __size, T* __data, bool reference=false){
          _size = __size;
          _dims = 1;
          _shape = new int[_dims]; _shape[0] = _size;
-         _data = new T[_size]; std::copy(__data, __data+_size, _data);
+         if(reference){
+            _data = __data;
+         } else {
+            _data = new T[_size]; std::copy(__data, __data+_size, _data);
+         }
       }
 
-      ndarray(const int& __dims, const int* __shape, bool _){
+      ndarray(const int& __dims, const int* __shape, T* __data, bool reference=false){
          _dims = __dims;
          _shape = new int[_dims]; std::copy(__shape, __shape+_dims, _shape);
          _size = get_size(__dims, __shape);
-         _data = new T[_size];
-      }
-
-      ndarray(const int& __dims, const int* __shape, T* __data){
-         _dims = __dims;
-         _shape = new int[_dims]; std::copy(__shape, __shape+_dims, _shape);
-         _size = get_size(__dims, __shape);
-         _data = new T[_size]; std::copy(__data, __data+_size, _data);
+         if(reference){
+            _data = __data;
+         } else {
+            _data = new T[_size]; std::copy(__data, __data+_size, _data);
+         }
       }
 
       ndarray(const ndarray<T>& old){
@@ -168,7 +169,7 @@ class ndarray {
 
          int size_out = idx2 - idx1;
 
-         return ndarray<T>(size_out, _data+idx1);
+         return ndarray<T>(size_out, _data+idx1, true);
       }
       ndarray<T> operator()(const int* pos1, const int* pos2) const{
          /* Slicing operator. */
@@ -189,7 +190,7 @@ class ndarray {
 
          int idx_initial = get_idx(_dims, _shape, pos1_real);
 
-         return ndarray<T>(_dims, shape_out, _data+idx_initial);
+         return ndarray<T>(_dims, shape_out, _data+idx_initial, true);
       }
 };
 
