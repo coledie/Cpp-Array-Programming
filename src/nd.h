@@ -46,22 +46,6 @@ namespace nd {
 
 
     template <typename T>
-    ndarray<T> resize(ndarray<T> input, const int& size_new, const T& fill_value=1){
-        /* Return a version of input with the input size given. */
-        int size_old = input.size();
-        T* data_old = input.data();
-
-        T* data_new = new T[size_new];
-        std::copy(data_old, data_old+size_old, data_new);
-        for(int i=size_old; i < size_new; i++)
-            data_new[i] = fill_value;
-
-        ndarray<T> output(size_new, data_new);
-        return output;
-    }
-
-
-    template <typename T>
     ndarray<T> squeeze(ndarray<T> input){
         /* Return version of input without any single valued dimensions. */
         int dims_old = input.dims();
@@ -297,7 +281,7 @@ namespace nd {
         if(shape[dims-1] != shape[dims-2])
             throw std::invalid_argument("Last 2 dimensions must be square to transpose.");
 
-        ndarray<T> output(dims, shape, false);
+        ndarray<T> output(dims, shape, new T[size]);
 
         T value;
         int temp, dim_m1 = dims-1, dim_m2 = dims-2;

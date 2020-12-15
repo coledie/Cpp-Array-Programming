@@ -55,17 +55,19 @@ int main() {
 
       int shape_new[] = {1, 2, 3};
       data.reshape(3, shape_new);
-      std::cout << "Shape: [";
+      std::cout << "[";
       for(int i=0; i < data.dims(); i++)
          std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
-      std::cout << "]" << std::endl;
+      std::cout << "] - ";
       printf("%s\n", (char*)data);
 
-      data = nd::squeeze(data);
-      std::cout << "Shape: [";
+      ndarray<dtype> data_new = nd::squeeze(data);
+      data = data_new;
+
+      std::cout << "[";
       for(int i=0; i < data.dims(); i++)
          std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
-      std::cout << "]" << std::endl;
+      std::cout << "] - ";
       printf("%s\n", (char*)data);
 
       assert(data.size() == size);
@@ -104,23 +106,6 @@ int main() {
    }
 
    {
-      const int size = 8;
-      typedef int dtype;
-
-      ndarray<dtype> data = nd::ones<dtype>(size);
-
-      const int size_new = 6;
-      ndarray<dtype> data_copy = nd::resize(data, size_new);
-      assert(data_copy.size() == size_new);
-      for(int i=0; i<size_new; ++i)
-         assert(data[i] == data_copy[i]);
-
-      data.~ndarray();
-      for(int i=0; i<size_new; ++i)
-         assert(data_copy[i] == 1);
-   }
-
-   {
       const int size = 3;
       typedef int dtype;
 
@@ -147,6 +132,25 @@ int main() {
       assert(whered.size() == size);
       for(int i=0; i<size; ++i)
          assert(whered[i] == expected[i]);
+   }
+
+   {
+      const int size = 4;
+      int shape[] = {2, 2};
+      typedef int dtype;
+
+      ndarray<dtype> data = nd::arange<dtype>(size).reshape(2, shape);
+
+      ndarray<dtype> data_t = nd::transpose(data);
+
+      int* pos_a = new int[2], * pos_b = new int[2];
+      for(int x=0; x<shape[1]; ++x){
+         for(int y=0; y<shape[0]; ++y){
+            pos_a[0] = pos_b[1] = x;
+            pos_a[1] = pos_b[0] = y;
+            assert(data[pos_a] == data_t[pos_b]);
+         }
+      }
    }
 
    printf("Finished!");
