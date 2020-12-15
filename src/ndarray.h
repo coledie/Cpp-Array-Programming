@@ -33,7 +33,7 @@ class ndarray {
          _data = __data;
       }
 
-      ndarray(const int& __dims, const int* __shape){
+      ndarray(const int& __dims, const int* __shape, bool _){
          _dims = __dims;
          _shape = new int[_dims]; std::copy(__shape, __shape+_dims, _shape);
          _size = get_size(__dims, __shape);
@@ -47,6 +47,13 @@ class ndarray {
          _data = __data;
       }
 
+      ndarray(const ndarray<T>& old){
+         _size = old.size();
+         _dims = old.dims();
+         _shape = new int[_dims]; std::copy(old.shape(), old.shape()+_dims, _shape);
+         _data = new T[_size]; std::copy(old.data(), old.data()+_size, _data);
+      }
+
       ~ndarray(){
          delete[] _data;
       }
@@ -55,16 +62,16 @@ class ndarray {
       iterator begin(){ return iterator(data(), 0); }
       iterator end(){ return iterator(data(), _size); }
 
-      int size(){ return _size; }
-      int dims(){ return _dims; }
-      int* shape(){ return _shape; }
-      T* data(){ return _data; }
+      int size() const{ return _size; }
+      int dims() const{ return _dims; }
+      int* shape() const{ return _shape; }
+      T* data() const{ return _data; }
 
-      T front(){ return _data[0]; }
-      T back(){ return _data[_size-1]; }
+      T front() const{ return _data[0]; }
+      T back() const{ return _data[_size-1]; }
 
       template <typename K>
-      ndarray<K> as(){
+      ndarray<K> as() const{
          /* Using data in this array, return similar array of type K. */
          K *output = new K[_size];
 
@@ -126,7 +133,7 @@ class ndarray {
          return char_out;
       }
 
-      T& operator[](int idx){
+      T& operator[](int idx) const{
          /* Indexing operator */
          if(abs(idx) > _size || idx == _size)
             throw std::invalid_argument((char*) "abs(idx) cannot be greater than size!");
@@ -134,7 +141,7 @@ class ndarray {
             idx = _size - idx;
          return _data[idx];
       }
-      T& operator[](const int* pos){
+      T& operator[](const int* pos) const{
          /* Indexing operator */
          int* pos_real = new int[_dims];
          for(int i=0; i<_dims; ++i){
@@ -148,7 +155,7 @@ class ndarray {
          return _data[get_idx(_dims, _shape, pos)];
       }
 
-      ndarray<T> operator()(int idx1, int idx2){
+      ndarray<T> operator()(int idx1, int idx2) const{
          /* Slicing operator. */
          if(abs(idx1) > _size || idx1 == _size)
             throw std::invalid_argument((char*) "abs(idx1) cannot be greater than size!");
@@ -163,7 +170,7 @@ class ndarray {
 
          return ndarray<T>(size_out, _data+idx1);
       }
-      ndarray<T> operator()(const int* pos1, const int* pos2){
+      ndarray<T> operator()(const int* pos1, const int* pos2) const{
          /* Slicing operator. */
          int* shape_out = new int[_dims], * pos1_real = new int[_dims], * pos2_real = new int[_dims];
          for(int i=0; i<_dims; ++i){
@@ -184,7 +191,6 @@ class ndarray {
 
          return ndarray<T>(_dims, shape_out, _data+idx_initial);
       }
-
 };
 
 
