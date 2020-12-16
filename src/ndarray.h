@@ -17,6 +17,7 @@ class ndarray {
       int _dims;
       int* _shape;
       T* _data;
+      bool reference_mode = false;
 
    public:
       ndarray(const int& __size){
@@ -27,6 +28,8 @@ class ndarray {
       }
 
       ndarray(const int& __size, T* __data, bool reference=false){
+         reference_mode = reference;
+
          _size = __size;
          _dims = 1;
          _shape = new int[_dims]; _shape[0] = _size;
@@ -38,6 +41,8 @@ class ndarray {
       }
 
       ndarray(const int& __dims, const int* __shape, T* __data, bool reference=false){
+         reference_mode = reference;
+
          _dims = __dims;
          _shape = new int[_dims]; std::copy(__shape, __shape+_dims, _shape);
          _size = get_size(__dims, __shape);
@@ -57,7 +62,8 @@ class ndarray {
 
       ~ndarray(){
          delete[] _shape;
-         delete[] _data;
+         if(!reference_mode)
+            delete[] _data;
       }
 
       typedef ndarray_iterator<T> iterator; 
@@ -160,7 +166,7 @@ class ndarray {
       }
       T& operator[](const int* pos) const{
          /* Indexing operator */
-         int* pos_real = new int[_dims];
+         int pos_real[_dims];
          for(int i=0; i<_dims; ++i){
             int idx = pos[i];
 
@@ -169,7 +175,7 @@ class ndarray {
 
             pos_real[i] = (idx >= 0 ? idx : _size - idx);
          }
-         return _data[get_idx(_dims, _shape, pos)];
+         return _data[get_idx(_dims, _shape, pos_real)];
       }
 
       ndarray<T> operator()(int idx1, int idx2) const{
@@ -189,7 +195,7 @@ class ndarray {
       }
       ndarray<T> operator()(const int* pos1, const int* pos2) const{
          /* Slicing operator. */
-         int* shape_out = new int[_dims], * pos1_real = new int[_dims], * pos2_real = new int[_dims];
+         int shape_out[_dims], pos1_real[_dims], pos2_real[_dims];
          for(int i=0; i<_dims; ++i){
             int idx1 = pos1[i], idx2 = pos2[i];
 

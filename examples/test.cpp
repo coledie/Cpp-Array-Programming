@@ -73,7 +73,7 @@ int main() {
       assert(data.front() == 0);
       assert(data.back() == size-1);
    }
-/*
+
    {
       const int size = 6;
       int shape[] = {2, 3};
@@ -142,7 +142,7 @@ int main() {
 
       ndarray<dtype> data_t = nd::transpose(data);
 
-      int* pos_a = new int[2], * pos_b = new int[2];
+      int pos_a[2], pos_b[2];
       for(int x=0; x<shape[1]; ++x){
          for(int y=0; y<shape[0]; ++y){
             pos_a[0] = pos_b[1] = x;
@@ -164,10 +164,11 @@ int main() {
       for(int i=0; i<size; ++i)
          assert(output[i] == 0);
 
+      /*
       output = nd::mod(data_a, data_b).as<dtype>();
-      std::cout << "here" << std::endl;
       for(int i=0; i<size; ++i)
          assert(output[i] == 0);
+      */
    }
 
    {
@@ -202,7 +203,7 @@ int main() {
       ndarray<dtype> output = nd::append(data, data);
       for(int i=0; i<size*2; ++i)
          assert(output[i] == i%size);
-   }*/
+   }
 
    printf("Finished!");
 

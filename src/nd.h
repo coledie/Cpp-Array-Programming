@@ -17,12 +17,10 @@ namespace nd {
         T* array2_data = array2.data();
 
         int size_total = array1_size + array2_size;
-        T* data = new T[size_total];
+        T data[size_total];
         std::copy(array1_data, array1_data+array1_size, data);
         std::copy(array2_data, array2_data+array2_size, data+array1_size);
-
-        ndarray<T> output(size_total, data);
-        return output;
+        return ndarray<T>(size_total, data);
     }
 
 
@@ -34,14 +32,12 @@ namespace nd {
         int* shape_in = input.shape();
         T* data_in = input.data();
 
-        int* shape_out = new T[dims_in];
+        int shape_out[dims_in];
         std::copy(shape_in, shape_in+dims_in, shape_out);
 
-        T* data_out = new T[size_in];
+        T data_out[size_in];
         std::copy(data_in, data_in+size_in, data_out);
-
-        ndarray<T> output(dims_in, shape_out, data_out);
-        return output;
+        return ndarray<T>(dims_in, shape_out, data_out);
     }
 
 
@@ -52,7 +48,7 @@ namespace nd {
         int* shape_old = input.shape();
 
         int dims_new = dims_old;
-        bool* mask = new bool[dims_old];
+        bool mask[dims_old];
         for(int i=0; i < dims_old; i++){
             bool invalid = shape_old[i] == 1;
 
@@ -60,7 +56,7 @@ namespace nd {
             mask[i] = !invalid;
         }
 
-        int* shape_new = new int[dims_new];
+        int shape_new[dims_new];
         for(int i=0, j=0; i < dims_old; i++){
             if(mask[i]){
                 shape_new[j] = shape_old[i];
@@ -70,13 +66,9 @@ namespace nd {
         
         int size_in = input.size();
         T* data_in = input.data();
-        T* data_out = new T[size_in];
+        T data_out[size_in];
         std::copy(data_in, data_in+size_in, data_out);
-        ndarray<T> output(dims_new, shape_new, data_out);
-        delete[] mask;
-        delete[] shape_new;
-        delete[] data_out;
-        return output;
+        return ndarray<T>(dims_new, shape_new, data_out);
     }
 
     // Logical
@@ -86,7 +78,7 @@ namespace nd {
         T* data_in = array.data();
         bool* data_mask = mask.data();
 
-        T* data_temp = new T[array.size()];
+        T data_temp[array.size()];
         int j = 0;
         for(int i=0; i<mask.size(); i++){
             if(data_mask[i]){
@@ -95,10 +87,9 @@ namespace nd {
             }
         }
 
-        T* data_out = new T[j];
+        T data_out[j];
         std::copy(data_temp, data_temp + j, data_out);
-        ndarray<T> output(j, data_out);
-        return output;
+        return ndarray<T>(j, data_out);
     }
 
 
@@ -119,13 +110,12 @@ namespace nd {
         int size = a.size();
         T* data_a = a.data();
         T* data_b = b.data();
-        T* data_output = new T[size];
+        T data_output[size];
 
         for(int i=0; i < size; i++)
             data_output[i] = operation(data_a[i], data_b[i]);
-        
-        ndarray<T> output(a.dims(), a.shape(), data_output);
-        return output;
+
+        return ndarray<T>(a.dims(), a.shape(), data_output);
     }
     template <typename T>
     ndarray<T> add(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _add_operator<T>>(a, b); }
@@ -205,13 +195,12 @@ namespace nd {
         int size = a.size();
         T* data_a = a.data();
         T* data_b = b.data();
-        bool* data_output = new bool[size];
+        bool data_output[size];
 
         for(int i=0; i < size; i++)
             data_output[i] = comparator(data_a[i], data_b[i]);
-        
-        ndarray<bool> output(a.dims(), a.shape(), data_output);
-        return output;
+
+        return ndarray<bool>(a.dims(), a.shape(), data_output);
     }
     template <typename T>
     ndarray<bool> gt(ndarray<T> a, ndarray<T> b){ return compare<T, _gt_operator<T>>(a, b); }
@@ -239,7 +228,8 @@ namespace nd {
         if(shape[dims-1] != shape[dims-2])
             throw std::invalid_argument("Last 2 dimensions must be square to transpose.");
 
-        ndarray<T> output(dims, shape, new T[size]);
+        T data_out[size];
+        ndarray<T> output(dims, shape, data_out);
 
         T value;
         int temp, dim_m1 = dims-1, dim_m2 = dims-2;
@@ -254,6 +244,7 @@ namespace nd {
             pos[dim_m2] = temp;
 
             output[pos] = value;
+            delete[] pos;
         }
 
         return output;
@@ -267,7 +258,7 @@ namespace nd {
         T* data_in = input.data();
 
         std::set<T> u;
-        T* data_temp = new int[size_in];
+        T data_temp[size_in];
         std::pair<std::set<int>::iterator, bool> ret;
         for(int i=0, j=0; i < size_in; i++){
             ret = u.insert(data_in[i]);
@@ -279,12 +270,9 @@ namespace nd {
         }
 
         int size_out = u.size();
-        T* data_out = new int[size_out];
+        T data_out[size_out];
         std::copy(data_temp, data_temp+size_out, data_out);
-        delete[] data_temp;
-
-        ndarray<T> output(size_out, data_out);
-        return output;
+        return ndarray<T>(size_out, data_out);
     }
 
 
@@ -292,13 +280,12 @@ namespace nd {
     ndarray<T> where(ndarray<bool> mask, const T& fill_true, const T& fill_false){
         int size_output = mask.size();
         bool* data_input = mask.data();
-        T* data_output = new T[size_output];
+        T data_output[size_output];
 
         for(int i=0; i < size_output; i++)
             data_output[i] = (data_input[i] ? fill_true : fill_false);
 
-        ndarray<T> output(mask.dims(), mask.shape(), data_output);
-        return output;
+        return ndarray<T>(mask.dims(), mask.shape(), data_output);
     }
 
     // Creation
