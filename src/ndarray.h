@@ -56,6 +56,7 @@ class ndarray {
       }
 
       ~ndarray(){
+         delete[] _shape;
          delete[] _data;
       }
 
