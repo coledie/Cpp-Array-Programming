@@ -59,22 +59,21 @@ int main() {
       for(int i=0; i < data.dims(); i++)
          std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
       std::cout << "] - ";
-      printf("%s\n", (char*)data);
+      printf("%s\n", ((std::string)data).c_str());
 
-      ndarray<dtype> data_new = nd::squeeze(data);
-      data = data_new;
+      data = nd::squeeze(data);
 
       std::cout << "[";
       for(int i=0; i < data.dims(); i++)
          std::cout << data.shape()[i] << (i < data.dims()-1 ? ", " : "");
       std::cout << "] - ";
-      printf("%s\n", (char*)data);
+      printf("%s\n", ((std::string)data).c_str());
 
       assert(data.size() == size);
       assert(data.front() == 0);
       assert(data.back() == size-1);
    }
-
+/*
    {
       const int size = 6;
       int shape[] = {2, 3};
@@ -152,6 +151,58 @@ int main() {
          }
       }
    }
+
+   {
+      const int size = 4;
+      typedef int dtype;
+
+      ndarray<dtype> data_a = nd::arange<dtype>(size);
+      ndarray<dtype> data_b = nd::arange<dtype>(size);
+      ndarray<dtype> output(size);
+
+      output = nd::sub<dtype>(data_a, data_b);
+      for(int i=0; i<size; ++i)
+         assert(output[i] == 0);
+
+      output = nd::mod(data_a, data_b).as<dtype>();
+      std::cout << "here" << std::endl;
+      for(int i=0; i<size; ++i)
+         assert(output[i] == 0);
+   }
+
+   {
+      const int size = 3;
+      typedef float dtype;
+
+      ndarray<dtype> data_a = nd::arange<dtype>(size);
+      ndarray<dtype> data_b = nd::ones<dtype>(size);
+
+      ndarray<bool> output(size);
+      bool* expected = new bool[size];
+
+      expected[0] = 0; expected[1] = 0; expected[2] = 1;
+      output = nd::gt<dtype>(data_a, data_b);
+      for(int i=0; i<size; ++i)
+         assert(output[i] == expected[i]);
+
+      expected[0] = 1; expected[1] = 1; expected[2] = 0;
+      output = nd::le<dtype>(data_a, data_b);
+      for(int i=0; i<size; ++i)
+         assert(output[i] == expected[i]);
+
+      delete[] expected;
+   }
+
+   {
+      const int size = 3;
+      typedef float dtype;
+
+      ndarray<dtype> data = nd::arange<dtype>(size);
+
+      ndarray<dtype> output = nd::append(data, data);
+      for(int i=0; i<size*2; ++i)
+         assert(output[i] == i%size);
+   }*/
 
    printf("Finished!");
 

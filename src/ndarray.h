@@ -113,7 +113,7 @@ class ndarray {
          return *this;
       }
 
-      operator char*() const {
+      operator std::string() const {
          /* Printf usage. */
          std::string output = "";
          for(int i=0; i<_dims; ++i)
@@ -144,10 +144,10 @@ class ndarray {
          for(int j=0; j<_dims; ++j)
             output += "]";
 
-         char* char_out = new char[output.size()+1];
-         output.copy(char_out, output.size()+1);
-         char_out[output.size()] = '\0';
-         return char_out;
+         //char* char_out = new char[output.size()+1];
+         //output.copy(char_out, output.size()+1);
+         //char_out[output.size()] = '\0';
+         return output;//char_out;
       }
 
       T& operator[](int idx) const{
