@@ -81,7 +81,9 @@ class ndarray {
             output[i] = (K) _data[i];
          }
 
-         return ndarray<K>(_size, output);
+         ndarray<K>output_nd(_size, output);
+         delete[] output;
+         return output_nd;
       };
 
       ndarray<T>& reshape(const int& dims_new, const int* shape_new){
@@ -95,6 +97,18 @@ class ndarray {
          _shape = new int[_dims];
          for(int i=0; i<_dims; ++i)
             _shape[i] = shape_new[i];
+
+         return *this;
+      }
+
+      ndarray<T>& operator=(ndarray<T> other){
+         delete[] _shape;
+         delete[] _data;
+
+         _size = other.size();
+         _dims = other.dims();
+         _shape = new int[_dims]; std::copy(other.shape(), other.shape()+_dims, _shape);
+         _data = new T[_size]; std::copy(other.data(), other.data()+_size, _data);
 
          return *this;
       }
@@ -124,6 +138,7 @@ class ndarray {
             output += (pos[_dims-1] < _shape[_dims-1]-1 ? ", " : "");
 
             std::copy(pos, pos + _dims, pos_old);
+            delete[] pos;
          }
 
          for(int j=0; j<_dims; ++j)

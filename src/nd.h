@@ -73,6 +73,9 @@ namespace nd {
         T* data_out = new T[size_in];
         std::copy(data_in, data_in+size_in, data_out);
         ndarray<T> output(dims_new, shape_new, data_out);
+        delete[] mask;
+        delete[] shape_new;
+        delete[] data_out;
         return output;
     }
 
