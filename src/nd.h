@@ -98,42 +98,41 @@ namespace nd {
         return output;
     }
 
-    template <typename T>
-    bool _add_operator(T& a, T& b){ return a + b; }
-    template <typename T>
-    bool _sub_operator(T& a, T& b){ return a - b; }
-    template <typename T>
-    bool _mul_operator(T& a, T& b){ return a * b; }
-    template <typename T>
-    bool _div_operator(T& a, T& b){ return a / b; }
-    template <typename T>
-    bool _mod_operator(T& a, T& b){ return a % b; }
 
-    template <typename T, typename O>
-    T* arithmetic(ndarray<T> a, ndarray<T> b){
+    template <typename T>
+    struct _add_operator{ T operator()(T a, T b) const{ return a + b; } };
+    template <typename T>
+    struct _sub_operator{ T operator()(T a, T b) const{ return a - b; } };
+    template <typename T>
+    struct _mul_operator{ T operator()(T a, T b) const{ return a * b; } };
+    template <typename T>
+    struct _div_operator{ T operator()(T a, T b) const{ return a / b; } };
+    struct _mod_operator{ int operator()(int a, int b) const{ return a % b; } };
+
+    template <typename T, typename C>
+    ndarray<T> arithmetic(ndarray<T> a, ndarray<T> b){
+        C operation;
+
         int size = a.size();
         T* data_a = a.data();
         T* data_b = b.data();
         T* data_output = new T[size];
 
         for(int i=0; i < size; i++)
-            data_output[i] = O(data_a[i], data_b[i]);
+            data_output[i] = operation(data_a[i], data_b[i]);
         
         ndarray<T> output(a.dims(), a.shape(), data_output);
         return output;
     }
-
-
     template <typename T>
-    T add(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _add_operator>(a, b); }
+    ndarray<T> add(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _add_operator<T>>(a, b); }
     template <typename T>
-    T sub(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _sub_operator>(a, b); }
+    ndarray<T> sub(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _sub_operator<T>>(a, b); }
     template <typename T>
-    T mul(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mul_operator>(a, b); }
+    ndarray<T> mul(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mul_operator<T>>(a, b); }
     template <typename T>
-    T div(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _div_operator>(a, b); }
-    template <typename T>
-    T mod(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mod_operator>(a, b); }
+    ndarray<T> div(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _div_operator<T>>(a, b); }
+    ndarray<int> mod(ndarray<int> a, ndarray<int> b){ return arithmetic<int, _mod_operator>(a, b); }
 
 
     //template <typename T>
@@ -185,46 +184,44 @@ namespace nd {
 
 
     template <typename T>
-    bool _gt_operator(T& a, T& b){ return a > b; }
+    struct _gt_operator{ bool operator()(T a, T b) const{ return a > b; } };
     template <typename T>
-    bool _ge_operator(T& a, T& b){ return a >= b; }
+    struct _ge_operator{ bool operator()(T a, T b) const{ return a >= b; } };
     template <typename T>
-    bool _lt_operator(T& a, T& b){ return a < b; }
+    struct _lt_operator{ bool operator()(T a, T b) const{ return a < b; } };
     template <typename T>
-    bool _le_operator(T& a, T& b){ return a <= b; }
+    struct _le_operator{ bool operator()(T a, T b) const{ return a <= b; } };
     template <typename T>
-    bool _eq_operator(T& a, T& b){ return a == b; }
+    struct _eq_operator{ bool operator()(T a, T b) const{ return a == b; } };
     template <typename T>
-    bool _ne_operator(T& a, T& b){ return a != b; }
-
+    struct _ne_operator{ bool operator()(T a, T b) const{ return a != b; } };
 
     template <typename T, typename C>
-    ndarray<T> compare(ndarray<T> a, ndarray<T> b){
+    ndarray<bool> compare(ndarray<T> a, ndarray<T> b){
+        C comparator;
         int size = a.size();
         T* data_a = a.data();
         T* data_b = b.data();
         bool* data_output = new bool[size];
 
         for(int i=0; i < size; i++)
-            data_output[i] = C(data_a[i], data_b[i]);
+            data_output[i] = comparator(data_a[i], data_b[i]);
         
         ndarray<bool> output(a.dims(), a.shape(), data_output);
         return output;
     }
-
-
     template <typename T>
-    ndarray<T> gt(ndarray<T> a, ndarray<T> b){ return compare<T, _gt_operator>(a, b); }
+    ndarray<bool> gt(ndarray<T> a, ndarray<T> b){ return compare<T, _gt_operator<T>>(a, b); }
     template <typename T>
-    ndarray<T> ge(ndarray<T> a, ndarray<T> b){ return compare<T, _ge_operator>(a, b); }
+    ndarray<bool> ge(ndarray<T> a, ndarray<T> b){ return compare<T, _ge_operator<T>>(a, b); }
     template <typename T>
-    ndarray<T> lt(ndarray<T> a, ndarray<T> b){ return compare<T, _lt_operator>(a, b); }
+    ndarray<bool> lt(ndarray<T> a, ndarray<T> b){ return compare<T, _lt_operator<T>>(a, b); }
     template <typename T>
-    ndarray<T> le(ndarray<T> a, ndarray<T> b){ return compare<T, _le_operator>(a, b); }
+    ndarray<bool> le(ndarray<T> a, ndarray<T> b){ return compare<T, _le_operator<T>>(a, b); }
     template <typename T>
-    ndarray<T> eq(ndarray<T> a, ndarray<T> b){ return compare<T, _eq_operator>(a, b); }
+    ndarray<bool> eq(ndarray<T> a, ndarray<T> b){ return compare<T, _eq_operator<T>>(a, b); }
     template <typename T>
-    ndarray<T> ne(ndarray<T> a, ndarray<T> b){ return compare<T, _ne_operator>(a, b); }
+    ndarray<bool> ne(ndarray<T> a, ndarray<T> b){ return compare<T, _ne_operator>(a, b); }
 
 
     template <typename T>
@@ -258,6 +255,7 @@ namespace nd {
 
         return output;
     }
+
 
     template <typename T>
     ndarray<T> unique(ndarray<T> input){
@@ -322,6 +320,7 @@ namespace nd {
     ndarray<T> zeros(const int& size){
         T* data = full<T>(size, 0);
         ndarray<T> output(size, data);
+        delete[] data;
         return output;
     }
 
@@ -330,6 +329,7 @@ namespace nd {
     ndarray<T> zeros(const int& dims, const int* shape){
         T* data = full<T>(dims, shape, 0);
         ndarray<T> output(dims, shape, data);
+        delete[] data;
         return output;
     }
 
@@ -338,6 +338,7 @@ namespace nd {
     ndarray<T> ones(const int& size){
         T* data = full<T>(size, 1);
         ndarray<T> output(size, data);
+        delete[] data;
         return output;
     }
 
@@ -346,14 +347,14 @@ namespace nd {
     ndarray<T> ones(const int& dims, const int* shape){
         T* data = full<T>(dims, shape, 1);
         ndarray<T> output(dims, shape, data);
+        delete[] data;
         return output;
     }
 
 
     template <typename T>
     ndarray<T> empty(const int& size){
-        T* data = new T[size];
-        ndarray<T> output(size, data);
+        ndarray<T> output(size);
         return output;
     }
 
@@ -361,7 +362,7 @@ namespace nd {
     template <typename T>
     ndarray<T> empty(const int& dims, const int* shape){
         int size = get_size(dims, shape);
-        return empty<T>(size);
+        return empty<T>(size).reshape(dims, shape);
     }
 
     template <typename T>
@@ -371,11 +372,14 @@ namespace nd {
         for(int i=0; i < size; i++)
             data[i] = start + (i * step);
 
-        return ndarray<T>(size, data);
+        ndarray<T> output(size, data);
+        delete[] data;
+        return output;
     }
     template <typename T>
     ndarray<T> arange(T stop){
-        return arange(0, stop);
+        T zero = 0;
+        return arange(zero, stop);
     }
 }
 
