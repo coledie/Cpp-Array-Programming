@@ -101,7 +101,8 @@ namespace nd {
     struct _mul_operator{ T operator()(T a, T b) const{ return a * b; } };
     template <typename T>
     struct _div_operator{ T operator()(T a, T b) const{ return a / b; } };
-    struct _mod_operator{ int operator()(int a, int b) const{ return a % b; } };
+    template <typename T>
+    struct _mod_operator{ T operator()(T a, T b) const{ return a % b; } };
 
     template <typename T, typename C>
     ndarray<T> arithmetic(ndarray<T> a, ndarray<T> b){
@@ -125,10 +126,10 @@ namespace nd {
     ndarray<T> mul(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mul_operator<T>>(a, b); }
     template <typename T>
     ndarray<T> div(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _div_operator<T>>(a, b); }
-    ndarray<int> mod(ndarray<int> a, ndarray<int> b){ return arithmetic<int, _mod_operator>(a, b); }
+    template <typename T>
+    ndarray<T> mod(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mod_operator<T>>(a, b); }
 
 
-    //template <typename T>
     template <typename T>
     struct _min_operator{ bool operator()(T a, T b) const{ return a < b; } };
     template <typename T>

@@ -156,19 +156,17 @@ int main() {
       const int size = 4;
       typedef int dtype;
 
-      ndarray<dtype> data_a = nd::arange<dtype>(size);
-      ndarray<dtype> data_b = nd::arange<dtype>(size);
+      ndarray<dtype> data_a = nd::arange<dtype>(1, size+1);
+      ndarray<dtype> data_b = nd::arange<dtype>(1, size+1);
       ndarray<dtype> output(size);
 
       output = nd::sub<dtype>(data_a, data_b);
       for(int i=0; i<size; ++i)
          assert(output[i] == 0);
 
-      /*
-      output = nd::mod(data_a, data_b).as<dtype>();
+      output = nd::mod<dtype>(data_a, data_b).as<dtype>();
       for(int i=0; i<size; ++i)
          assert(output[i] == 0);
-      */
    }
 
    {
