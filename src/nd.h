@@ -149,10 +149,43 @@ namespace nd {
 
         return value_curr;
     }
+    template <typename T, typename C>
+    T* compare_value(ndarray<T> input, int axis){
+        int dims_in = input.dims();
+        int* shape_in = input.shape();
+        T* data_in = input.data();
+
+        if(abs(axis) > dims_in || axis == dims_in)
+            throw std::invalid_argument((char*) "abs(axis) cannot be greater than dims!");
+        if(axis < 0)
+            axis = dims_in + axis;
+        int axis_size = shape_in[axis];
+
+        C comparator;
+        T value_min = std::numeric_limits<T>::min(), value_max = std::numeric_limits<T>::max();
+        T value = (comparator(value_min, value_max) ? value_max : value_min), * value_curr = new T[axis_size];
+        for(int i=0; i<axis_size; ++i)
+            value_curr[i] = value;
+
+        for(int i=0, j, *pos; i < input.size(); ++i){
+            value = data_in[i];
+            pos = get_pos(dims_in, shape_in, i);
+            j = pos[axis];
+            delete[] pos;
+            if (comparator(value, value_curr[j]))
+                value_curr[j] = value;
+        }
+
+        return value_curr;
+    }
     template <typename T>
     T min(ndarray<T> input){ return compare_value<T, _min_operator<T>>(input); }
     template <typename T>
+    T* min(ndarray<T> input, int axis){ return compare_value<T, _min_operator<T>>(input, axis); }
+    template <typename T>
     T max(ndarray<T> input){ return compare_value<T, _max_operator<T>>(input); }
+    template <typename T>
+    T* max(ndarray<T> input, int axis){ return compare_value<T, _max_operator<T>>(input, axis); }
 
     template <typename T, typename C>
     int compare_idx(ndarray<T> input){
@@ -171,10 +204,49 @@ namespace nd {
 
         return idx_curr;
     }
+    template <typename T, typename C>
+    int* compare_idx(ndarray<T> input, int axis){
+        int dims_in = input.dims();
+        int* shape_in = input.shape();
+        T* data_in = input.data();
+
+        if(abs(axis) > dims_in || axis == dims_in)
+            throw std::invalid_argument((char*) "abs(axis) cannot be greater than dims!");
+        if(axis < 0)
+            axis = dims_in + axis;
+        int axis_size = shape_in[axis];
+
+        C comparator;
+        T value_min = std::numeric_limits<T>::min(), value_max = std::numeric_limits<T>::max();
+        T value = (comparator(value_min, value_max) ? value_max : value_min), * value_curr = new T[axis_size];
+        int* idx_curr = new int[axis_size];
+        for(int i=0; i<axis_size; ++i){
+            idx_curr[i] = -1;
+            value_curr[i] = value;
+        }
+
+        for(int i=0, j, *pos; i < input.size(); i++){
+            value = input.data()[i];
+            pos = get_pos(dims_in, shape_in, i);
+            j = pos[axis];
+            delete[] pos;
+            if (comparator(value, value_curr[j])){
+                value_curr[j] = value;
+                idx_curr[j] = i;
+            }
+        }
+
+        delete[] value_curr;
+        return idx_curr;
+    }
     template <typename T>
     int amin(ndarray<T> input){ return compare_idx<T, _min_operator<T>>(input); }
     template <typename T>
+    int* amin(ndarray<T> input, int axis){ return compare_idx<T, _min_operator<T>>(input, axis); }
+    template <typename T>
     int amax(ndarray<T> input){ return compare_idx<T, _max_operator<T>>(input); }
+    template <typename T>
+    int* amax(ndarray<T> input, int axis){ return compare_idx<T, _max_operator<T>>(input, axis); }
 
 
     template <typename T>

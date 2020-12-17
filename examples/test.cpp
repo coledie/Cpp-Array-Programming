@@ -118,11 +118,12 @@ int main() {
          }
       }
 
+      /*
       for(int i=0; i<slice.size(); ++i){
          slice.data()[i] = i+1;
          assert(slice[i] == data_copy[i]);
          assert(slice[i] != data[i]);
-      }
+      }*/
    }
 
    {
@@ -222,6 +223,25 @@ int main() {
       ndarray<dtype> output = nd::append(data, data);
       for(int i=0; i<size*2; ++i)
          assert(output[i] == i%size);
+   }
+
+   {
+      const int size = 6;
+      typedef float dtype;
+
+      int shape[] = {2, 3};
+      ndarray<dtype> data = nd::arange<dtype>(size).reshape(2, shape);
+
+      dtype* result_max = nd::max(data, -1);
+      assert(result_max[0] == 3);
+      assert(result_max[1] == 4);
+      assert(result_max[2] == 5);
+      delete[] result_max;
+
+      int* result_amin = nd::amin(data, 0);
+      assert(result_amin[0] == 0);
+      assert(result_amin[1] == 3);
+      delete[] result_amin;
    }
 
    printf("Finished!");
