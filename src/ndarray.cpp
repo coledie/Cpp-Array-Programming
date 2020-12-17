@@ -11,8 +11,13 @@ int get_size(const int& dims, const int* shape){
 
 int get_idx(const int& dims, const int* shape, const int* pos){
    int idx = 0;
-   for(int i=0; i<dims; ++i)
-      idx += pos[i] * (i ? shape[i-1] : 1);
+   for(int i=0; i<dims; ++i){
+      int dim_product = 1;
+      for(int j=dims-1; j>i; --j)
+         dim_product *= shape[j];
+
+      idx += pos[i] * dim_product;
+   }
    return idx;
 }
 
