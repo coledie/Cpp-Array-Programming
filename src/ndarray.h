@@ -4,7 +4,6 @@
 #include "../src/nditerator.h"
 #include <stdexcept>
 #include <cmath>
-#include <iostream>
 
 
 int get_size(const int&, const int*);
@@ -162,7 +161,7 @@ class ndarray {
          if(abs(idx) > _size || idx == _size)
             throw std::invalid_argument((char*) "abs(idx) cannot be greater than size!");
          if(idx < 0)
-            idx = _size - idx;
+            idx = _size + idx;
          return _data[idx];
       }
       T& operator[](const int* pos) const{
@@ -186,9 +185,9 @@ class ndarray {
          if(abs(idx2) > _size || idx2 == _size)
             throw std::invalid_argument((char*) "abs(idx2) cannot be greater than size!");
          if(idx1 < 0)
-            idx1 = _size - idx1;
+            idx1 = _size + idx1;
          if(idx2 < 0)
-            idx2 = _size - idx2;
+            idx2 = _size + idx2;
 
          int size_out = idx2 - idx1;
 
