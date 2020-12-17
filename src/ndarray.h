@@ -179,7 +179,7 @@ class ndarray {
       }
 
       ndarray<T> operator()(int idx1, int idx2) const{
-         /* Slicing operator. */
+         /* Slicing operator - by reference. */
          if(abs(idx1) > _size || idx1 == _size)
             throw std::invalid_argument((char*) "abs(idx1) cannot be greater than size!");
          if(abs(idx2) > _size || idx2 == _size)
@@ -194,7 +194,7 @@ class ndarray {
          return ndarray<T>(size_out, _data+idx1, true);
       }
       ndarray<T> operator()(const int* pos1, const int* pos2) const{
-         /* Slicing operator. */
+         /* Slicing operator - not yet by reference. */
          int shape_out[_dims], pos1_real[_dims], pos2_real[_dims];
          for(int i=0; i<_dims; ++i){
             int idx1 = pos1[i], idx2 = pos2[i];
@@ -212,7 +212,7 @@ class ndarray {
 
          int size_out = get_size(_dims, shape_out);
          int* pos_curr, pos_curr_offset[_dims];
-         T* data_out = new T[size_out];
+         T data_out[size_out];
          for(int i=0; i<size_out; ++i){
             pos_curr = get_pos(_dims, shape_out, i);
             for(int j=0; j<_dims; ++j)
@@ -222,7 +222,7 @@ class ndarray {
             delete[] pos_curr;
          }
 
-         return ndarray<T>(_dims, shape_out, data_out, true);
+         return ndarray<T>(_dims, shape_out, data_out, false);
       }
 };
 
