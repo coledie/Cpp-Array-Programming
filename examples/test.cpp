@@ -85,6 +85,14 @@ int main() {
       int pos_edit[] = {1, 1};
       data[pos_edit] = value_new;
       assert(data[pos_edit] == value_new);
+   }
+
+   {
+      const int size = 6;
+      int shape[] = {2, 3};
+      typedef int dtype;
+
+      ndarray<dtype> data = nd::arange<dtype>(size).reshape(2, shape);
 
       ndarray<dtype> data_copy = nd::copy(data);
       for(int i=0; i<data.dims(); ++i)
@@ -94,8 +102,21 @@ int main() {
 
       int slice_a[] = {0, 0}, slice_b[] = {2, 2};
       ndarray<dtype> slice = data_copy(slice_a, slice_b);
-      for(int i=0; i<slice.size(); ++i)
-         assert(slice[i] == data_copy[i]);
+      int pos_curr[2];
+      std::cout << "[";
+      for(int i=0; i < slice.dims(); i++)
+         std::cout << slice.shape()[i] << (i < slice.dims()-1 ? ", " : "");
+      std::cout << "]\n";
+
+      printf("Copy: %s\n", ((std::string)data_copy).c_str());
+      printf("Slice: %s\n", ((std::string)slice).c_str());
+
+      for(int y=slice_a[1]; y<slice_b[1]; ++y){
+         for(int x=slice_a[0]; x<slice_b[0]; ++x){
+            pos_curr[0] = x; pos_curr[1] = y;
+            assert(slice[pos_curr] == data_copy[pos_curr]);
+         }
+      }
 
       for(int i=0; i<slice.size(); ++i){
          slice.data()[i] = i+1;

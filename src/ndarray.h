@@ -4,6 +4,7 @@
 #include "../src/nditerator.h"
 #include <stdexcept>
 #include <cmath>
+#include <iostream>
 
 
 int get_size(const int&, const int*);
@@ -210,9 +211,19 @@ class ndarray {
             shape_out[i] = pos2_real[i] - pos1_real[i];
          }
 
-         int idx_initial = get_idx(_dims, _shape, pos1_real);
+         int size_out = get_size(_dims, shape_out);
+         int* pos_curr, pos_curr_offset[_dims];
+         T* data_out = new T[size_out];
+         for(int i=0; i<size_out; ++i){
+            pos_curr = get_pos(_dims, shape_out, i);
+            for(int j=0; j<_dims; ++j)
+               pos_curr_offset[j] = pos1_real[j] + pos_curr[j];
 
-         return ndarray<T>(_dims, shape_out, _data+idx_initial, true);
+            data_out[i] = _data[get_idx(_dims, _shape, pos_curr_offset)];
+            delete[] pos_curr;
+         }
+
+         return ndarray<T>(_dims, shape_out, data_out, true);
       }
 };
 
