@@ -12,15 +12,23 @@ namespace nd {
     ndarray<O> broadcast(ndarray<T> a, ndarray<K> b){
         /* Apply ufunc op to all pairs (a, b) w/ a in A and b in B. */
         F operation;
-        int size = a.size();
-        T* data_a = a.data();
-        K* data_b = b.data();
-        O data_output[size];
+        int size_a = a.size(), size_b = b.size(), size_out;
+        int dims_a = a.dims(), dims_b = b.dims(), dims_out;
+        int* shape_a = a.shape(), * shape_b = b.shape(), *shape_out;
+        T* data_a = a.data(); K* data_b = b.data(); O* data_output;
 
-        for(int i=0; i < size; i++)
+        // if dims same or dims same w/ prepended ones
+        size_out = size_a;
+        dims_out = dims_a;
+        shape_out = shape_a;
+        data_output = new O[size_out];
+
+        for(int i=0; i < size_out; i++)
             data_output[i] = operation(data_a[i], data_b[i]);
 
-        return ndarray<O>(a.dims(), a.shape(), data_output);
+        ndarray<O> output(dims_out, shape_out, data_output);
+        delete[] data_output;
+        return output;
     }
 
 
