@@ -281,6 +281,28 @@ int main() {
       delete[] expected;
    }
 
+   {  // Broadcast [(2, 3), (3)]
+      const int size_a = 6, size_b = 3;
+      int shape_a[] = {2, 3}, shape_b[] = {3};
+      int size_out = size_a;
+      typedef float dtype;
+
+      ndarray<dtype> data_a = nd::arange<dtype>(size_a).reshape(2, shape_a);
+      ndarray<dtype> data_b = nd::ones<dtype>(size_b).reshape(1, shape_b);
+
+      ndarray<bool> output(size_out);
+
+      bool expected1[] = {0, 0, 1, 1, 1, 1};
+      output = nd::gt<dtype>(data_a, data_b);
+      for(int i=0; i<size_out; ++i)
+         assert(output[i] == expected1[i]);
+
+      bool expected2[] = {1, 1, 0, 0, 0, 0};
+      output = nd::le<dtype>(data_a, data_b);
+      for(int i=0; i<size_out; ++i)
+         assert(output[i] == expected2[i]);
+   }
+
    printf("Finished!");
 
    return 0;

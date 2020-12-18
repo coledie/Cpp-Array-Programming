@@ -12,59 +12,74 @@ namespace nd {
     ndarray<O> broadcast(ndarray<T> a, ndarray<K> b){
         /* Apply ufunc op to all pairs (a, b) w/ a in A and b in B. */
         F operation;
-        int size_a = a.size(), size_b = b.size(), size_out;
+        int size_out;
         int dims_a = a.dims(), dims_b = b.dims(), dims_out = 0;
         int* shape_a = a.shape(), * shape_b = b.shape(), *shape_out;
         T* data_a = a.data(); K* data_b = b.data(); O* data_output;
+        bool dims_diff = false;
 
         int dims_lesser = (dims_a < dims_b ? dims_a : dims_b), dims_greater = (dims_a > dims_b ? dims_a : dims_b);
-        int shape_temp[dims_greater];
-        for(int i=0; i<dims_lesser; ++i){
-            int value_a = shape_a[dims_a - i - 1];
-            int value_b = shape_b[dims_b - i - 1];
-
+        for(int i=0, value_a, value_b; i<dims_lesser; ++i){
+            value_a = shape_a[dims_a - i - 1];
+            value_b = shape_b[dims_b - i - 1];
             if(value_a != value_b){
                 if(value_a != 1 && value_b != 1)
                     throw std::invalid_argument((char*) "Where a, b dimensions not equal, one of them must be 1.");
 
-                shape_temp[i] = (value_a > value_b ? value_a : value_b);
-                dims_out += 1;
-            } else shape_temp[i] = 0;
+                dims_diff = 1;
+                break;
+            }
         }
-        for(int i=dims_lesser, value; i<dims_greater; ++i){
-            value = (i < dims_a ? shape_a[dims_a - i - 1] : shape_b[dims_b - i - 1]);
-
-            if(value > 1){
-                shape_temp[i] = value;
-                dims_out += 1;
-            } else shape_temp[i] = 0;
+        if(!dims_diff){
+            for(int i=dims_lesser, value; i<dims_greater; ++i){
+                value = (i < dims_a ? shape_a[dims_a - i - 1] : shape_b[dims_b - i - 1]);
+                if(value > 1){
+                    dims_diff = 1;
+                    break;
+                }
+            }
         }
 
-        if(!dims_out){
-            // if dims same or dims same w/ prepended ones
-            size_out = size_a;
+        if(!dims_diff){
             dims_out = dims_a;
             shape_out = shape_a;
+            size_out = get_size(dims_out, shape_out);
             data_output = new O[size_out];
 
             for(int i=0; i < size_out; i++)
                 data_output[i] = operation(data_a[i], data_b[i]);
         } else {
-            shape_out = new int[dims_out];
-            for(int i=0, j=0; i<dims_greater; ++i){
-                if(shape_temp[i] != 0){
-                    shape_out[j] = shape_temp[i];
-                    j += 1;
-                }
+            int* shape_lesser;
+            if(dims_a > dims_b){
+                dims_out = dims_a;
+                shape_out = shape_a;
+                shape_lesser = shape_b;
+            } else {
+                dims_out = dims_b;
+                shape_out = shape_b;
+                shape_lesser = shape_a;
             }
             size_out = get_size(dims_out, shape_out);
             data_output = new O[size_out];
 
-            // TODO iterate and generate data_output
+            for(int i=0, *pos_lesser, *pos_greater; i < size_out; i++){
+                pos_greater = get_pos(dims_out, shape_out, i);
+                pos_lesser = new int[dims_lesser];
+                for(int i=0; i<dims_lesser; ++i){
+                    pos_lesser[dims_lesser - i - 1] = pos_greater[dims_greater - i - 1] % shape_lesser[dims_lesser - i - 1];
+                }
+
+                if(dims_a > dims_b)
+                    data_output[i] = operation(a[pos_greater], b[pos_lesser]);
+                else
+                    data_output[i] = operation(a[pos_lesser], b[pos_greater]);
+
+                delete[] pos_greater; delete[] pos_lesser;
+            }
         }
 
         ndarray<O> output(dims_out, shape_out, data_output);
-        delete[] data_output, shape_out;
+        delete[] data_output;
         return output;
     }
 
