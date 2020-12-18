@@ -13,21 +13,58 @@ namespace nd {
         /* Apply ufunc op to all pairs (a, b) w/ a in A and b in B. */
         F operation;
         int size_a = a.size(), size_b = b.size(), size_out;
-        int dims_a = a.dims(), dims_b = b.dims(), dims_out;
+        int dims_a = a.dims(), dims_b = b.dims(), dims_out = 0;
         int* shape_a = a.shape(), * shape_b = b.shape(), *shape_out;
         T* data_a = a.data(); K* data_b = b.data(); O* data_output;
 
-        // if dims same or dims same w/ prepended ones
-        size_out = size_a;
-        dims_out = dims_a;
-        shape_out = shape_a;
-        data_output = new O[size_out];
+        int dims_lesser = (dims_a < dims_b ? dims_a : dims_b), dims_greater = (dims_a > dims_b ? dims_a : dims_b);
+        int shape_temp[dims_greater];
+        for(int i=0; i<dims_lesser; ++i){
+            int value_a = shape_a[dims_a - i - 1];
+            int value_b = shape_b[dims_b - i - 1];
 
-        for(int i=0; i < size_out; i++)
-            data_output[i] = operation(data_a[i], data_b[i]);
+            if(value_a != value_b){
+                if(value_a != 1 && value_b != 1)
+                    throw std::invalid_argument((char*) "Where a, b dimensions not equal, one of them must be 1.");
+
+                shape_temp[i] = (value_a > value_b ? value_a : value_b);
+                dims_out += 1;
+            } else shape_temp[i] = 0;
+        }
+        for(int i=dims_lesser, value; i<dims_greater; ++i){
+            value = (i < dims_a ? shape_a[dims_a - i - 1] : shape_b[dims_b - i - 1]);
+
+            if(value > 1){
+                shape_temp[i] = value;
+                dims_out += 1;
+            } else shape_temp[i] = 0;
+        }
+
+        if(!dims_out){
+            // if dims same or dims same w/ prepended ones
+            size_out = size_a;
+            dims_out = dims_a;
+            shape_out = shape_a;
+            data_output = new O[size_out];
+
+            for(int i=0; i < size_out; i++)
+                data_output[i] = operation(data_a[i], data_b[i]);
+        } else {
+            shape_out = new int[dims_out];
+            for(int i=0, j=0; i<dims_greater; ++i){
+                if(shape_temp[i] != 0){
+                    shape_out[j] = shape_temp[i];
+                    j += 1;
+                }
+            }
+            size_out = get_size(dims_out, shape_out);
+            data_output = new O[size_out];
+
+            // TODO iterate and generate data_output
+        }
 
         ndarray<O> output(dims_out, shape_out, data_output);
-        delete[] data_output;
+        delete[] data_output, shape_out;
         return output;
     }
 
