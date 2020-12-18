@@ -9,18 +9,18 @@
 namespace nd {
     /* Namespace for ndarray related functions. */
     // Functional
-    template <typename T>
-    ndarray<T> append(ndarray<T> array1, ndarray<T> array2){
+    template <typename T, typename K, typename O=float>
+    ndarray<O> append(ndarray<T> array1, ndarray<K> array2){
         int array1_size = array1.size();
         T* array1_data = array1.data();
         int array2_size = array2.size();
-        T* array2_data = array2.data();
+        K* array2_data = array2.data();
 
         int size_total = array1_size + array2_size;
-        T data[size_total];
+        O data[size_total];
         std::copy(array1_data, array1_data+array1_size, data);
         std::copy(array2_data, array2_data+array2_size, data+array1_size);
-        return ndarray<T>(size_total, data);
+        return ndarray<O>(size_total, data);
     }
 
 
@@ -92,42 +92,41 @@ namespace nd {
         return ndarray<T>(j, data_out);
     }
 
+    template <typename T, typename K, typename O>
+    struct _add_operator{ O operator()(T a, K b) const{ return a + b; } };
+    template <typename T, typename K, typename O>
+    struct _sub_operator{ O operator()(T a, K b) const{ return a - b; } };
+    template <typename T, typename K, typename O>
+    struct _mul_operator{ O operator()(T a, K b) const{ return a * b; } };
+    template <typename T, typename K, typename O>
+    struct _div_operator{ O operator()(T a, K b) const{ return a / b; } };
+    template <typename T, typename K, typename O>
+    struct _mod_operator{ O operator()(T a, K b) const{ return a % b; } };
 
-    template <typename T>
-    struct _add_operator{ T operator()(T a, T b) const{ return a + b; } };
-    template <typename T>
-    struct _sub_operator{ T operator()(T a, T b) const{ return a - b; } };
-    template <typename T>
-    struct _mul_operator{ T operator()(T a, T b) const{ return a * b; } };
-    template <typename T>
-    struct _div_operator{ T operator()(T a, T b) const{ return a / b; } };
-    template <typename T>
-    struct _mod_operator{ T operator()(T a, T b) const{ return a % b; } };
-
-    template <typename T, typename C>
-    ndarray<T> arithmetic(ndarray<T> a, ndarray<T> b){
+    template <typename T, typename K, typename C, typename O>
+    ndarray<O> arithmetic(ndarray<T> a, ndarray<K> b){
         C operation;
 
         int size = a.size();
         T* data_a = a.data();
-        T* data_b = b.data();
-        T data_output[size];
+        K* data_b = b.data();
+        O data_output[size];
 
         for(int i=0; i < size; i++)
             data_output[i] = operation(data_a[i], data_b[i]);
 
-        return ndarray<T>(a.dims(), a.shape(), data_output);
+        return ndarray<O>(a.dims(), a.shape(), data_output);
     }
-    template <typename T>
-    ndarray<T> add(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _add_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<T> sub(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _sub_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<T> mul(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mul_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<T> div(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _div_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<T> mod(ndarray<T> a, ndarray<T> b){ return arithmetic<T, _mod_operator<T>>(a, b); }
+    template <typename T, typename K, typename O=float>
+    ndarray<O> add(ndarray<T> a, ndarray<K> b){ return arithmetic<T, K, _add_operator<T, K, O>, O>(a, b); }
+    template <typename T, typename K, typename O=float>
+    ndarray<O> sub(ndarray<T> a, ndarray<K> b){ return arithmetic<T, K, _sub_operator<T, K, O>, O>(a, b); }
+    template <typename T, typename K, typename O=float>
+    ndarray<O> mul(ndarray<T> a, ndarray<K> b){ return arithmetic<T, K, _mul_operator<T, K, O>, O>(a, b); }
+    template <typename T, typename K, typename O=float>
+    ndarray<O> div(ndarray<T> a, ndarray<K> b){ return arithmetic<T, K, _div_operator<T, K, O>, O>(a, b); }
+    template <typename T, typename K, typename O=float>
+    ndarray<O> mod(ndarray<T> a, ndarray<K> b){ return arithmetic<T, K, _mod_operator<T, K, O>, O>(a, b); }
 
 
     template <typename T>
@@ -249,25 +248,25 @@ namespace nd {
     int* amax(ndarray<T> input, int axis){ return compare_idx<T, _max_operator<T>>(input, axis); }
 
 
-    template <typename T>
-    struct _gt_operator{ bool operator()(T a, T b) const{ return a > b; } };
-    template <typename T>
-    struct _ge_operator{ bool operator()(T a, T b) const{ return a >= b; } };
-    template <typename T>
-    struct _lt_operator{ bool operator()(T a, T b) const{ return a < b; } };
-    template <typename T>
-    struct _le_operator{ bool operator()(T a, T b) const{ return a <= b; } };
-    template <typename T>
-    struct _eq_operator{ bool operator()(T a, T b) const{ return a == b; } };
-    template <typename T>
-    struct _ne_operator{ bool operator()(T a, T b) const{ return a != b; } };
+    template <typename T, typename K>
+    struct _gt_operator{ bool operator()(T a, K b) const{ return a > b; } };
+    template <typename T, typename K>
+    struct _ge_operator{ bool operator()(T a, K b) const{ return a >= b; } };
+    template <typename T, typename K>
+    struct _lt_operator{ bool operator()(T a, K b) const{ return a < b; } };
+    template <typename T, typename K>
+    struct _le_operator{ bool operator()(T a, K b) const{ return a <= b; } };
+    template <typename T, typename K>
+    struct _eq_operator{ bool operator()(T a, K b) const{ return a == b; } };
+    template <typename T, typename K>
+    struct _ne_operator{ bool operator()(T a, K b) const{ return a != b; } };
 
-    template <typename T, typename C>
-    ndarray<bool> compare(ndarray<T> a, ndarray<T> b){
+    template <typename T, typename K, typename C>
+    ndarray<bool> compare(ndarray<T> a, ndarray<K> b){
         C comparator;
         int size = a.size();
         T* data_a = a.data();
-        T* data_b = b.data();
+        K* data_b = b.data();
         bool data_output[size];
 
         for(int i=0; i < size; i++)
@@ -275,18 +274,18 @@ namespace nd {
 
         return ndarray<bool>(a.dims(), a.shape(), data_output);
     }
-    template <typename T>
-    ndarray<bool> gt(ndarray<T> a, ndarray<T> b){ return compare<T, _gt_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<bool> ge(ndarray<T> a, ndarray<T> b){ return compare<T, _ge_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<bool> lt(ndarray<T> a, ndarray<T> b){ return compare<T, _lt_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<bool> le(ndarray<T> a, ndarray<T> b){ return compare<T, _le_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<bool> eq(ndarray<T> a, ndarray<T> b){ return compare<T, _eq_operator<T>>(a, b); }
-    template <typename T>
-    ndarray<bool> ne(ndarray<T> a, ndarray<T> b){ return compare<T, _ne_operator>(a, b); }
+    template <typename T, typename K>
+    ndarray<bool> gt(ndarray<T> a, ndarray<K> b){ return compare<T, K, _gt_operator<T, K>>(a, b); }
+    template <typename T, typename K>
+    ndarray<bool> ge(ndarray<T> a, ndarray<K> b){ return compare<T, K, _ge_operator<T, K>>(a, b); }
+    template <typename T, typename K>
+    ndarray<bool> lt(ndarray<T> a, ndarray<K> b){ return compare<T, K, _lt_operator<T, K>>(a, b); }
+    template <typename T, typename K>
+    ndarray<bool> le(ndarray<T> a, ndarray<K> b){ return compare<T, K, _le_operator<T, K>>(a, b); }
+    template <typename T, typename K>
+    ndarray<bool> eq(ndarray<T> a, ndarray<K> b){ return compare<T, K, _eq_operator<T, K>>(a, b); }
+    template <typename T, typename K>
+    ndarray<bool> ne(ndarray<T> a, ndarray<K> b){ return compare<T, K, _ne_operator<T, K>>(a, b); }
 
 
     template <typename T>

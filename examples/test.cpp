@@ -178,17 +178,17 @@ int main() {
       const int size = 4;
       typedef int dtype;
 
-      ndarray<dtype> data_a = nd::arange<dtype>(1, size+1);
+      ndarray<dtype> data_a = nd::arange<dtype>(size);
       ndarray<dtype> data_b = nd::arange<dtype>(1, size+1);
       ndarray<dtype> output(size);
 
       output = nd::sub<dtype>(data_a, data_b);
       for(int i=0; i<size; ++i)
-         assert(output[i] == 0);
+         assert(output[i] == -1);
 
       output = nd::mod<dtype>(data_a, data_b).as<dtype>();
       for(int i=0; i<size; ++i)
-         assert(output[i] == 0);
+         assert(output[i] == i);
    }
 
    {
@@ -223,10 +223,23 @@ int main() {
       ndarray<dtype> output = nd::append(data, data);
       for(int i=0; i<size*2; ++i)
          assert(output[i] == i%size);
+
+      ndarray<int> data_a = nd::arange<int>(size);
+      ndarray<float> data_b = nd::arange<float>(size);
+      
+      ndarray<float> output_1 = nd::append(data_a, data_b);
+      for(int i=0; i<size*2; ++i)
+         assert(output_1[i] == i%size);
+
+
+      ndarray<float> output_2 = nd::append(data_b, data_a);
+      for(int i=0; i<size*2; ++i)
+         assert(output_2[i] == i%size);
    }
 
    {
       const int size = 6;
+
       typedef float dtype;
 
       int shape[] = {2, 3};

@@ -118,6 +118,18 @@ class ndarray {
 
          return *this;
       }
+      template <typename I>
+      ndarray<T>& operator=(ndarray<I> other){
+         delete[] _shape;
+         delete[] _data;
+
+         _size = other.size();
+         _dims = other.dims();
+         _shape = new int[_dims]; std::copy(other.shape(), other.shape()+_dims, _shape);
+         _data = new T[_size]; std::copy(other.data(), other.data()+_size, _data);
+
+         return *this;
+      }
 
       operator std::string() const {
          /* Printf usage. */
