@@ -1,4 +1,5 @@
 # C++ Array Programming
+
 Array Programming with C++.
 
-Numpy clone to practice C++ development and optimization.
+Numpy clone without ufunc foundation to practice C++ development.
